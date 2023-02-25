@@ -18,6 +18,7 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     public const HOME = '/dashboard';
+    public const SHOPIFYURL = 'https://2bda049309904d17a70414958d8ab49f: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@ashkalstore.myshopify.com';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.

@@ -12,6 +12,7 @@ Route::group(
             Route::prefix('dashboard')->group(function() {
                 Route::get('/', Dashboard\DashboardController::class)->name('dashboard');
                 Route::resource('users', Dashboard\UserController::class);
+                Route::resource('orders',Dashboard\OrderController::class);
             });
         });
     require __DIR__.'/auth.php';

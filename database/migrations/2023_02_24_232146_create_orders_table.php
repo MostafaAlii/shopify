@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('order_id')->unique();
-            $table->unsignedBigInteger('admin_graphql_api_id')->nullable();
-            $table->unsignedBigInteger('app_id')->nullable();
+            $table->longText('order_id');
+            $table->longText('admin_graphql_api_id')->nullable();
+            $table->longText('app_id')->nullable();
             $table->longText('browser_ip')->nullable();
             $table->longText('buyer_accepts_marketing')->nullable();
             $table->longText('cancel_reason')->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->longText('cart_token')->nullable();
             $table->longText('checkout_id')->nullable();
             $table->longText('checkout_token')->nullable();
-            $table->date('closed_at')->nullable();
+            $table->longText('closed_at')->nullable();
             $table->longText('confirmed')->nullable();
             $table->longText('contact_email')->nullable();
             $table->longText('currency')->nullable();
@@ -53,7 +53,7 @@ return new class extends Migration
             $table->longText('payment_gateway_names')->nullable();
             $table->longText('phone')->nullable();
             $table->string('presentment_currency')->nullable();
-            $table->date('processed_at')->nullable();
+            $table->longText('processed_at')->nullable();
             $table->longText('processing_method')->nullable();
             $table->longText('reference')->nullable();
             $table->longText('referring_site')->nullable();

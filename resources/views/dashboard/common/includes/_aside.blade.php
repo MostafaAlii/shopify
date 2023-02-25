@@ -40,11 +40,11 @@
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link" href="../../demo13/dist/dashboards/only-header.html">
+                    <a class="menu-link" href="{{route('orders.index')}}">
                         <span class="menu-icon">
                             <i class="bi bi-window fs-3"></i>
                         </span>
-                        <span class="menu-title">Only Header</span>
+                        <span class="menu-title">Orders</span>
                     </a>
                 </div>
                 <div class="menu-item">
