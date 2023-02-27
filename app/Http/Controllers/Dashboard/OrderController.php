@@ -147,21 +147,18 @@ class OrderController extends Controller
                 'fulfillment_status' => $response['order']['fulfillment_status'] ?? null,
             ]);
 
-            if(isset($response['order']['fulfillments'][0])){
-                $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order->id)->first();
-                if ($updateOrCreateOrderDetails) {
-                    DB::table('order_details')->where('order_id', $order->id)->update([
-                        'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
-                    ]);
-                } else {
-                    DB::table('order_details')->insert([
-                        'order_id' => $order->id,
-                        'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
-                    ]);
-                }
-            }
 
-           
+            $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order->id)->first();
+            if ($updateOrCreateOrderDetails) {
+                DB::table('order_details')->where('order_id', $order->id)->update([
+                    'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
+                ]);
+            } else {
+                DB::table('order_details')->insert([
+                    'order_id' => $order->id,
+                    'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
+                ]);
+            }
 
 
         }
