@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
@@ -13,11 +14,26 @@ class OrderController extends Controller
 
     public function index()
     {
+        $responses = Http::pool(fn(Pool $pool) => [
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?since_id=1&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=open&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=closed&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=cancelled&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=any&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?fulfillment_status=any&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?fulfillment_status=shipped&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?fulfillment_status=partial&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?fulfillment_status=unshipped&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?fulfillment_status=unfulfilled&limit=250'),
+        ]);
 
-        $responses = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250');
-        if ($responses->ok()) {
-            foreach ($responses['orders'] as $response) {
-                $order = DB::table('orders')->where('order_id', $response['id'])->first();
+        if ($responses[0]->ok() && $responses[1]->ok() && $responses[2]->ok() && $responses[3]->ok() && $responses[4]->ok() && $responses[5]->ok() && $responses[6]->ok() && $responses[7]->ok() && $responses[8]->ok() && $responses[9]->ok() && $responses[10]->ok()) {
+            foreach (array_merge($responses[0]['orders'], $responses[1]['orders'], $responses[2]['orders'], $responses[3]['orders'], $responses[4]['orders'], $responses[5]['orders'], $responses[6]['orders'], $responses[7]['orders'], $responses[8]['orders'], $responses[9]['orders'], $responses[10]['orders']) as $response) {
+//                foreach ($responses[0]['orders'] as $response) {
+
+
+                    $order = DB::table('orders')->where('order_id', $response['id'])->first();
                 if (!$order) {
                     DB::table('orders')->insert([
                         'order_id' => $response['id'],
@@ -131,18 +147,21 @@ class OrderController extends Controller
                 'fulfillment_status' => $response['order']['fulfillment_status'] ?? null,
             ]);
 
-
-            $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order->id)->first();
-            if ($updateOrCreateOrderDetails) {
-                DB::table('order_details')->where('order_id', $order->id)->update([
-                    'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
-                ]);
-            } else {
-                DB::table('order_details')->insert([
-                    'order_id' => $order->id,
-                    'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
-                ]);
+            if(isset($response['order']['fulfillments'][0])){
+                $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order->id)->first();
+                if ($updateOrCreateOrderDetails) {
+                    DB::table('order_details')->where('order_id', $order->id)->update([
+                        'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
+                    ]);
+                } else {
+                    DB::table('order_details')->insert([
+                        'order_id' => $order->id,
+                        'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
+                    ]);
+                }
             }
+
+           
 
 
         }
