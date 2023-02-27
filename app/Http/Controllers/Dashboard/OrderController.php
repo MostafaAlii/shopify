@@ -134,8 +134,9 @@ class OrderController extends Controller
 
             $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order->id)->first();
             if ($updateOrCreateOrderDetails) {
-                $updateOrCreateOrderDetails->tracking_number = $response['order']['fulfillments'][0]['tracking_number'];
-                $updateOrCreateOrderDetails->save();
+                DB::table('order_details')->where('order_id', $order->id)->update([
+                    'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
+                ]);
             } else {
                 DB::table('order_details')->insert([
                     'order_id' => $order->id,
