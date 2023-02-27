@@ -26,10 +26,20 @@ class OrderController extends Controller
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?fulfillment_status=partial&limit=250'),
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?fulfillment_status=unshipped&limit=250'),
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?fulfillment_status=unfulfilled&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=authorized&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=pending&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=paid&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=partially_paid&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=refunded&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=voided&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=partially_refunded&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=any&limit=250'),
+            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=unpaid&limit=250'),
+
         ]);
 
-        if ($responses[0]->ok() && $responses[1]->ok() && $responses[2]->ok() && $responses[3]->ok() && $responses[4]->ok() && $responses[5]->ok() && $responses[6]->ok() && $responses[7]->ok() && $responses[8]->ok() && $responses[9]->ok() && $responses[10]->ok()) {
-            foreach (array_merge($responses[0]['orders'], $responses[1]['orders'], $responses[2]['orders'], $responses[3]['orders'], $responses[4]['orders'], $responses[5]['orders'], $responses[6]['orders'], $responses[7]['orders'], $responses[8]['orders'], $responses[9]['orders'], $responses[10]['orders']) as $response) {
+        if ($responses[0]->ok() && $responses[1]->ok() && $responses[2]->ok() && $responses[3]->ok() && $responses[4]->ok() && $responses[5]->ok() && $responses[6]->ok() && $responses[7]->ok() && $responses[8]->ok() && $responses[9]->ok() && $responses[10]->ok() && $responses[11]->ok() && $responses[12]->ok() && $responses[1]->ok() && $responses[14]->ok() && $responses[15]->ok() && $responses[16]->ok() && $responses[17]->ok() && $responses[18]->ok() && $responses[19]->ok()) {
+            foreach (array_merge($responses[0]['orders'], $responses[1]['orders'], $responses[2]['orders'], $responses[3]['orders'], $responses[4]['orders'], $responses[5]['orders'], $responses[6]['orders'], $responses[7]['orders'], $responses[8]['orders'], $responses[9]['orders'], $responses[10]['orders'] ,$responses[11]['orders'] ,$responses[12]['orders'] ,$responses[13]['orders'] ,$responses[14]['orders'] ,$responses[15]['orders'] ,$responses[16]['orders'] ,$responses[17]['orders'] ,$responses[18]['orders'] ,$responses[19]['orders']) as $response) {
 //                foreach ($responses[0]['orders'] as $response) {
 
 
