@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->longText('order_id');
+            $table->longText('order_id')->nullable();
             $table->longText('admin_graphql_api_id')->nullable();
             $table->longText('app_id')->nullable();
             $table->longText('browser_ip')->nullable();
@@ -63,6 +63,7 @@ return new class extends Migration
             $table->unsignedBigInteger('subtotal_price')->nullable();
             $table->longText('tags')->nullable();
             $table->longText('tax_lines')->nullable();
+            $table->longText('tracking_number')->nullable();
             $table->boolean('taxes_included')->nullable();
             $table->boolean('test')->nullable();
             $table->longText('token')->nullable();

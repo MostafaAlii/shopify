@@ -14,9 +14,8 @@ class OrderController extends Controller
     public function index()
     {
 
-        $responses = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=any');
+        $responses = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250');
         if ($responses->ok()) {
-
             foreach ($responses['orders'] as $response) {
                 $order = DB::table('orders')->where('order_id', $response['id'])->first();
                 if (!$order) {
@@ -35,6 +34,7 @@ class OrderController extends Controller
                         'confirmed' => $response['confirmed'] ?? null,
                         'contact_email' => $response['contact_email'] ?? null,
                         'currency' => $response['currency'] ?? null,
+//                        'tracking_number' =>  array_key_exists('tracking_number',$response['fulfillments']) == true ? $response['fulfillments']['tracking_number'] : null ,
                         'current_subtotal_price' => $response['current_subtotal_price'] ?? null,
                         'current_total_discounts' => $response['current_total_discounts'] ?? null,
                         'current_total_duties_set' => $response['current_total_duties_set'] ?? null,
@@ -85,7 +85,7 @@ class OrderController extends Controller
                 }
             }
             return "ok";
-        }else{
+        } else {
             return "No";
         }
 
@@ -121,7 +121,31 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        //
+
+        $response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders/' . $id . '.json');
+
+        if ($response->ok()) {
+            $order = DB::table('orders')->where('order_id', $response['order']['id'])->first();
+            DB::table('orders')->where('order_id', $response['order']['id'])->update([
+                'financial_status' => $response['order']['financial_status'] ?? null,
+                'fulfillment_status' => $response['order']['fulfillment_status'] ?? null,
+            ]);
+
+
+            $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order->id)->first();
+            if ($updateOrCreateOrderDetails) {
+                $updateOrCreateOrderDetails->tracking_number = $response['order']['fulfillments'][0]['tracking_number'];
+                $updateOrCreateOrderDetails->save();
+            } else {
+                DB::table('order_details')->insert([
+                    'order_id' => $order->id,
+                    'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
+                ]);
+            }
+
+
+        }
+        return "ok";
     }
 
     /**

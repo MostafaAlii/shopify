@@ -48,11 +48,11 @@
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link" href="../../demo13/dist/landing.html">
+                    <a class="menu-link" href="{{route('orders.show','5274606829863')}}">
                         <span class="menu-icon">
                             <i class="bi bi-app-indicator fs-3"></i>
                         </span>
-                        <span class="menu-title">Landing Page</span>
+                        <span class="menu-title">order details</span>
                     </a>
                 </div>
                 <div class="menu-item">
