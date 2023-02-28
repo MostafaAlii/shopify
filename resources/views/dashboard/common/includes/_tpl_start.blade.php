@@ -29,9 +29,7 @@
 			<link href="{{ asset("assets/dashboard/plugins/global/plugins.bundle.rtl.css") }}" rel="stylesheet" type="text/css" />
 			<!--begin::Global Stylesheets Bundle(used by all pages)-->
 			<link href="{{ asset("assets/dashboard/css/style.bundle.rtl.css") }}" rel="stylesheet" type="text/css" />
-            <link href="{{ asset('assets/dashboard/css/datatable/datatable_bootstrap4.min.css') }}" rel="stylesheet">
-            <link href="{{ asset('assets/dashboard/css/datatable/responsive_bootstrap4.min.css') }}" rel="stylesheet">
-            <link href="{{ asset('assets/dashboard/css/datatable/buttons_bootstrap4.min.css') }}" rel="stylesheet">
+            <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css"/>
 		@else
 			<!--begin::Page Vendor Stylesheets(used by this page)-->
 			<link href="{{ asset("assets/dashboard/plugins/global/plugins.bundle.css") }}" rel="stylesheet" type="text/css" />

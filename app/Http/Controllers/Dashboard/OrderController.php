@@ -8,12 +8,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
+use App\DataTables\OrderDatatable;
 
 class OrderController extends Controller
 {
 
-    public function index()
-    {
+    public function index(OrderDatatable $dataTable) {
+        return $dataTable->render('dashboard.orders.index');
+    }
+    public function orderSync() {
         $responses = Http::pool(fn(Pool $pool) => [
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250'),
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?since_id=1&limit=250'),
@@ -35,15 +38,10 @@ class OrderController extends Controller
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=partially_refunded&limit=250'),
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=any&limit=250'),
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?financial_status=unpaid&limit=250'),
-
         ]);
-
         if ($responses[0]->ok() && $responses[1]->ok() && $responses[2]->ok() && $responses[3]->ok() && $responses[4]->ok() && $responses[5]->ok() && $responses[6]->ok() && $responses[7]->ok() && $responses[8]->ok() && $responses[9]->ok() && $responses[10]->ok() && $responses[11]->ok() && $responses[12]->ok() && $responses[1]->ok() && $responses[14]->ok() && $responses[15]->ok() && $responses[16]->ok() && $responses[17]->ok() && $responses[18]->ok() && $responses[19]->ok()) {
-            foreach (array_merge($responses[0]['orders'], $responses[1]['orders'], $responses[2]['orders'], $responses[3]['orders'], $responses[4]['orders'], $responses[5]['orders'], $responses[6]['orders'], $responses[7]['orders'], $responses[8]['orders'], $responses[9]['orders'], $responses[10]['orders'] ,$responses[11]['orders'] ,$responses[12]['orders'] ,$responses[13]['orders'] ,$responses[14]['orders'] ,$responses[15]['orders'] ,$responses[16]['orders'] ,$responses[17]['orders'] ,$responses[18]['orders'] ,$responses[19]['orders']) as $response) {
-//                foreach ($responses[0]['orders'] as $response) {
-
-
-                    $order = DB::table('orders')->where('order_id', $response['id'])->first();
+            foreach (array_merge($responses[0]['orders'], $responses[1]['orders'], $responses[2]['orders'], $responses[3]['orders'], $responses[4]['orders'], $responses[5]['orders'], $responses[6]['orders'], $responses[7]['orders'], $responses[8]['orders'], $responses[9]['orders'], $responses[10]['orders'], $responses[11]['orders'], $responses[12]['orders'], $responses[13]['orders'], $responses[14]['orders'], $responses[15]['orders'], $responses[16]['orders'], $responses[17]['orders'], $responses[18]['orders'], $responses[19]['orders']) as $response) {
+                $order = DB::table('orders')->where('order_id', $response['id'])->first();
                 if (!$order) {
                     DB::table('orders')->insert([
                         'order_id' => $response['id'],
@@ -110,14 +108,11 @@ class OrderController extends Controller
                     ]);
                 }
             }
-            return "ok";
+            return redirect()->back()->with('success', 'Orders synced successfully');
         } else {
-            return "No";
+            return redirect()->back()->with('error', 'Something went wrong');
         }
-
-
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -148,7 +143,7 @@ class OrderController extends Controller
     public function show($id)
     {
 
-        $response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders/' . $id . '.json');
+        /*$response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders/' . $id . '.json');
 
         if ($response->ok()) {
             $order = DB::table('orders')->where('order_id', $response['order']['id'])->first();
@@ -172,7 +167,7 @@ class OrderController extends Controller
 
 
         }
-        return "ok";
+        return "ok";*/
     }
 
     /**

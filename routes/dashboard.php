@@ -13,6 +13,7 @@ Route::group(
                 Route::get('/', Dashboard\DashboardController::class)->name('dashboard');
                 Route::resource('users', Dashboard\UserController::class);
                 Route::resource('orders',Dashboard\OrderController::class);
+                Route::get('order_sync', [Dashboard\OrderController::class, 'orderSync'])->name('ordersSync');
             });
         });
     require __DIR__.'/auth.php';
