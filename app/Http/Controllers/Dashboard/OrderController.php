@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -138,36 +139,38 @@ class OrderController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function show($id)
+    public function show($order_id)
     {
-
-        /*$response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders/' . $id . '.json');
-
-        if ($response->ok()) {
+        //$order = DB::table('orders')->where('order_id', $order_id)->first();
+        $order = Order::where('order_id', $order_id)->with('order_details')->first();
+        $response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders/' . $order_id . '.json');
+        if ($response->status() == 200) {
             $order = DB::table('orders')->where('order_id', $response['order']['id'])->first();
             DB::table('orders')->where('order_id', $response['order']['id'])->update([
                 'financial_status' => $response['order']['financial_status'] ?? null,
                 'fulfillment_status' => $response['order']['fulfillment_status'] ?? null,
             ]);
+            $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order_id)->first();
+            $tracking_number = null;
 
-
-            $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order->id)->first();
+            if (isset($response['order']['fulfillments']) && !empty($response['order']['fulfillments'])) {
+                $tracking_number = $response['order']['fulfillments'][0]['tracking_number'] ?? null;
+            }
             if ($updateOrCreateOrderDetails) {
                 DB::table('order_details')->where('order_id', $order->id)->update([
-                    'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
+                    'tracking_number' => $tracking_number
                 ]);
             } else {
                 DB::table('order_details')->insert([
                     'order_id' => $order->id,
-                    'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
+                    'tracking_number' => $tracking_number,
                 ]);
             }
-
-
+            return view('dashboard.orders.show', ['order' => $order, 'response' => $response]);
         }
-        return "ok";*/
+        //return view('dashboard.orders.show', ['order' => $order, 'response' => $response]);
     }
 
     /**

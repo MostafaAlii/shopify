@@ -22,14 +22,55 @@ class OrderDatatable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addColumn('action', 'dashboard.orders.btn.action')
-            ->editColumn('created_at', function ($order) {
-                return $order->created_at?->diffForHumans();
+            ->editColumn('order_id', function ($order) {
+                return '<span class="badge badge-primary"><a class="text-light" href="' . route('orders.show', $order->order_id) . '" target="_blank">' . $order->order_id . '</a></span>';
             })
-            ->editColumn('updated_at', function ($order) {
-                return $order->updated_at?->diffForHumans();
+            ->editColumn('financial_status', function($order) {
+                $badge = $order->financial_status == 'pending' ? 'warning' : 'success';
+                return '<span class="badge badge-' . $badge . '">' . $order->financial_status . '</span>';
+            })
+            ->editColumn('gateway', function($order) {
+                $badge = $order->gateway == 'Cash on Delivery (COD)' ? 'primary' : 'success';
+                return '<span class="badge badge-' . $badge . '">' . $order->gateway . '</span>';
+            })
+            ->editColumn('checkout_id', function($order) {
+                $badge = $order->checkout_id == null ? 'danger' : 'success';
+                if ($order->checkout_id == null)
+                    return '<span class="badge badge-' . $badge . '">No Checkout</span>';
+                return '<span class="badge badge-' . $badge . '">' . $order->checkout_id . '</span>';
+            })
+            ->editColumn('cancelled_at', function($order) {
+                $badge = $order->cancelled_at == null ? 'danger' : 'success';
+                if ($order->cancelled_at == null)
+                    return '<span class="badge badge-' . $badge . '">No Cancelled Data</span>';
+                return '<span class="badge badge-' . $badge . '">' . $order->cancelled_at . '</span>';
+            })
+            ->editColumn('closed_at', function($order) {
+                $badge = $order->closed_at == null ? 'danger' : 'success';
+                if ($order->closed_at == null)
+                    return '<span class="badge badge-' . $badge . '">No Closed Data</span>';
+                return '<span class="badge badge-' . $badge . '">' . $order->closed_at . '</span>';
+            })
+            ->editColumn('created_at', function($order) {
+                $badge = $order->created_at == null ? 'danger' : 'success';
+                if ($order->created_at == null)
+                    return '<span class="badge badge-' . $badge . '">No Created Data</span>';
+                return '<span class="badge badge-' . $badge . '">' . $order->created_at->diffForHumans() . '</span>';
+            })
+            ->editColumn('updated_at', function($order) {
+                $badge = $order->updated_at == null ? 'danger' : 'success';
+                if ($order->updated_at == null)
+                    return '<span class="badge badge-' . $badge . '">No Updated Data</span>';
+                return '<span class="badge badge-' . $badge . '">' . $order->updated_at->diffForHumans() . '</span>';
             })
             ->rawColumns([
+                'financial_status',
+                'checkout_id',
+                'gateway',
                 'action',
+                'order_id',
+                'cancelled_at',
+                'closed_at',
                 'created_at',
                 'updated_at',
             ]);
@@ -129,6 +170,7 @@ class OrderDatatable extends DataTable
             ['name'=>'gateway', 'data'=>'gateway', 'title'=>'Gateway'],
             ['name'=>'number', 'data'=>'number', 'title'=>'Number'],
             ['name'=>'order_number', 'data'=>'order_number', 'title'=>'Order Number'],
+            ['name'=>'checkout_id', 'data'=>'checkout_id', 'title'=>'Checkout'],
             ['name'=>'cancelled_at', 'data'=>'cancelled_at', 'title'=>'Cancel At'],
             ['name'=>'closed_at', 'data'=>'closed_at', 'title'=>'Closed At'],
             ['name'=>'created_at', 'data'=>'created_at', 'title'=>'Created At'],
