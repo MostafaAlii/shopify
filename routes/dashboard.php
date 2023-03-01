@@ -15,6 +15,11 @@ Route::group(
                 Route::resource('orders',Dashboard\OrderController::class);
                 Route::get('order_sync', [Dashboard\OrderController::class, 'orderSync'])->name('ordersSync');
                 Route::get('orders_updated', [Dashboard\OrderController::class, 'orders_updated'])->name('orders_updated');
+                Route::orderStatus(Order::PAID_STATUS);
+                Route::orderStatus(Order::PENDING_STATUS);
+                Route::orderStatus(Order::PARTIALLY_REFUNDED_STATUS);
+                Route::orderStatus(Order::REFUNDED_STATUS);
+                Route::orderStatus(Order::VOIDED_STATUS);
             });
         });
     require __DIR__.'/auth.php';

@@ -10,12 +10,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 use App\DataTables\OrderDatatable;
+use App\DataTables\OrderStatusDataTable;
 
 class OrderController extends Controller
 {
 
     public function index(OrderDatatable $dataTable) {
-        return $dataTable->render('dashboard.orders.index');
+        return $dataTable->render('dashboard.orders.index', ['pageTitle' => '']);
     }
     public function orders_updated() {
         $responses = Http::pool(fn(Pool $pool) => [
@@ -290,5 +291,25 @@ class OrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getOrderByStatus(OrderStatusDataTable $dataTable) {
+        //$orders = Order::where('financial_status', $status)->with('order_details')->get();
+        $status = request()->segment(count(request()->segments()));
+        /*if ($status == 'paid') {
+            $orders = Order::getOrderCountByPaidFinancialStatus()->count();
+        } elseif ($status == 'pending') {
+            $orders = Order::getOrderCountByPendingFinancialStatus()->count();
+        } elseif ($status == 'refunded') {
+            $orders = Order::getOrderCountByRefundedFinancialStatus()->count();
+        } elseif ($status == 'partially_refunded') {
+            $orders = Order::getOrderCountByPartiallyRefundedFinancialStatus()->count();
+        } elseif ($status == 'voided') {
+            $orders = Order::getOrderCountByVoidedFinancialStatus()->count();
+        } else {
+            $orders = Order::getOrderCountByPaidFinancialStatus()->count();
+        }
+        return $orders;*/
+        return $dataTable->render('dashboard.orders.index', ['status' => $status, 'pageTitle' => $status]);
     }
 }

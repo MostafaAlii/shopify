@@ -1,7 +1,11 @@
 @extends('dashboard.layouts.master')
 
 @section('css')
-
+<style>
+    div #SvgjsSvg1006, div #apexcharts1o2qyuial {
+        display: none !important;
+    }
+</style>
 @endsection
 
 @section('pageTitle')
@@ -45,11 +49,11 @@
                                     </svg>
                                 </span>
                                     <!--end::Svg Icon-->
-                                    <a href="#" class="text-dark fw-bold fs-6">
-                                        Paid
+                                    <a href="{{ route('order.paid') }}" class="text-dark fw-bold fs-6">
+                                        {{ucfirst(Order::PAID_STATUS)}}
                                         <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPaidFinancialStatus()->count()}}</span>
                                         <br>
-                                        total ( {{Order::getTotalPriceOfPaidOrders()}} $ )
+                                        total ( {{Order::getOrderCountByPaidFinancialStatus()->sum('total_price')}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->
@@ -65,11 +69,11 @@
                                     </svg>
                                 </span>
                                     <!--end::Svg Icon-->
-                                    <a href="#" class="text-dark fw-bold fs-6">
-                                        Pending
+                                    <a href="{{ route('order.pending') }}" class="text-dark fw-bold fs-6">
+                                        {{ucfirst(Order::PENDING_STATUS)}}
                                         <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPendingFinancialStatus()->count()}}</span>
                                         <br>
-                                        total ( {{Order::getTotalPriceOfPendingOrders()}} $ )
+                                        total ( {{Order::getOrderCountByPendingFinancialStatus()->sum('total_price')}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->
@@ -89,11 +93,11 @@
                                     </svg>
                                         <br>
                                     <!--end::Svg Icon-->
-                                    <a href="#" class="text-dark fw-bold fs-6 mt-2">
-                                        Partially Refunded <br>
+                                    <a href="{{ route('order.partially_refunded') }}" class="text-dark fw-bold fs-6 mt-2">
+                                        {{ucfirst(Order::PARTIALLY_REFUNDED_STATUS)}} <br>
                                         <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPartiallyRefundedFinancialStatus()->count()}}</span>
                                         <br>
-                                        total ( {{Order::getTotalPriceOfPartiallyRefundedOrders()}} $ )
+                                        total ( {{Order::getOrderCountByPartiallyRefundedFinancialStatus()->sum('total_price')}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->
@@ -109,11 +113,11 @@
                                         </svg>
                                     </span>
                                     <!--end::Svg Icon-->
-                                    <a href="#" class="text-dark fw-bold fs-6 mt-2">
-                                        Refunded
+                                    <a href="{{ route('order.refunded') }}" class="text-dark fw-bold fs-6 mt-2">
+                                        {{ucfirst(Order::REFUNDED_STATUS)}} <br>
                                         <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByRefundedFinancialStatus()->count()}}</span>
                                         <br>
-                                        total ( {{Order::getTotalPriceOfRefundedOrders()}} $ )
+                                        total ( {{Order::getOrderCountByRefundedFinancialStatus()->sum('total_price')}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->
@@ -133,10 +137,10 @@
                                         <rect x="3" y="13" width="3" height="6" rx="1.5" fill="black" />
                                     </svg>
                                         <!--end::Svg Icon-->
-                                    <a href="#" class="text-light text-lg-center pull-left fw-bold fs-7 mt-3">
-                                        Voided
+                                    <a href="{{ route('order.voided') }}" class="text-light text-lg-center pull-left fw-bold fs-7 mt-3">
+                                        {{ucfirst(Order::VOIDED_STATUS)}}
                                         <span class="text-gray-50 fs-8 fw-bold ms-2">{{Order::getOrderCountByVoidedFinancialStatus()->count()}}</span>
-                                        total ( {{Order::getTotalPriceOfVoidedOrders()}} $ )
+                                        total ( {{Order::getOrderCountByVoidedFinancialStatus()->sum('total_price')}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->

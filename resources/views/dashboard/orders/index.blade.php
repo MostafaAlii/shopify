@@ -6,7 +6,7 @@
 @endsection
 
 @section('pageTitle')
-    الطلبات
+    الطلبات | {{ $pageTitle }}
 @endsection
 
 @section('content')

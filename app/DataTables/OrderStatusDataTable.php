@@ -9,7 +9,7 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class OrderDatatable extends DataTable
+class OrderStatusDataTable extends DataTable
 {
     /**
      * Build DataTable class.
@@ -79,12 +79,14 @@ class OrderDatatable extends DataTable
     /**
      * Get query source of dataTable.
      *
-     * @param \App\Models\OrderDatatable $model
+     * @param \App\Models\OrderStatusDataTable $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query()
+    public function query(Order $model)
     {
-        return Order::orderByRaw('FIELD(financial_status, "paid", "pending", "partially_refunded", "refunded", "voided")')->latest('id');
+        $status = request()->segment(count(request()->segments()));
+        //return $model->newQuery()->where('financial_status', )->latest('id');
+        return $model->newQuery()->whereFinancialStatus($status)->latest('id');
     }
 
     /**
@@ -192,6 +194,6 @@ class OrderDatatable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Order_' . date('YmdHis');
+        return 'OrderStatus_' . date('YmdHis');
     }
 }
