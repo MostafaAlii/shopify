@@ -43,15 +43,28 @@ class Order extends Model
         );
     }
 
-    public function order_details()
-    {
-        return $this->hasOne(OrderDetails::class, 'id');
-    }
-
-
     public function orderdetails()
     {
         return $this->hasOne(OrderDetails::class,'order_id');
+    }
+
+    public function scopeGetOrderCountByPaidFinancialStatus($query) {
+        return $query->whereFinancialStatus('paid')->count();
+    }
+    public function scopeGetOrderCountByPendingFinancialStatus($query) {
+        return $query->whereFinancialStatus('pending')->count();
+    }
+
+    public function scopeGetOrderCountByPartiallyRefundedFinancialStatus($query) {
+        return $query->whereFinancialStatus('partially_refunded')->count();
+    }
+
+    public function scopeGetOrderCountByRefundedFinancialStatus($query) {
+        return $query->whereFinancialStatus('refunded')->count();
+    }
+
+    public function scopeGetOrderCountByVoidedFinancialStatus($query) {
+        return $query->whereFinancialStatus('voided')->count();
     }
 
 }

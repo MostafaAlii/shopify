@@ -82,9 +82,12 @@ class OrderDatatable extends DataTable
      * @param \App\Models\OrderDatatable $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Order $model)
+    public function query()
     {
-        return $model->newQuery();
+        /** Financial Status
+         * voided ملغى
+         **/
+        return Order::orderByRaw('FIELD(financial_status, "paid", "pending", "partially_refunded", "refunded", "voided")')->latest('id');
     }
 
     /**
