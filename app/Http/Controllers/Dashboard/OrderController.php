@@ -16,7 +16,7 @@ class OrderController extends Controller
 {
 
     public function index(OrderDatatable $dataTable) {
-        return $dataTable->render('dashboard.orders.index', ['pageTitle' => '']);
+        return $dataTable->render('dashboard.orders.index', ['pageTitle' => 'الطلبات', 'status' => 'كل الطلبات']);
     }
     public function orders_updated() {
         $responses = Http::pool(fn(Pool $pool) => [
@@ -294,22 +294,7 @@ class OrderController extends Controller
     }
 
     public function getOrderByStatus(OrderStatusDataTable $dataTable) {
-        //$orders = Order::where('financial_status', $status)->with('order_details')->get();
         $status = request()->segment(count(request()->segments()));
-        /*if ($status == 'paid') {
-            $orders = Order::getOrderCountByPaidFinancialStatus()->count();
-        } elseif ($status == 'pending') {
-            $orders = Order::getOrderCountByPendingFinancialStatus()->count();
-        } elseif ($status == 'refunded') {
-            $orders = Order::getOrderCountByRefundedFinancialStatus()->count();
-        } elseif ($status == 'partially_refunded') {
-            $orders = Order::getOrderCountByPartiallyRefundedFinancialStatus()->count();
-        } elseif ($status == 'voided') {
-            $orders = Order::getOrderCountByVoidedFinancialStatus()->count();
-        } else {
-            $orders = Order::getOrderCountByPaidFinancialStatus()->count();
-        }
-        return $orders;*/
-        return $dataTable->render('dashboard.orders.index', ['status' => $status, 'pageTitle' => $status]);
+        return $dataTable->render('dashboard.orders.index', ['status' => ucfirst($status), 'pageTitle' => 'الطلبات']);
     }
 }
