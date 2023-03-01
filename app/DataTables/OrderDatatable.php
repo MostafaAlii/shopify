@@ -171,10 +171,10 @@ class OrderDatatable extends DataTable
             ['name'=>'number', 'data'=>'number', 'title'=>'Number'],
             ['name'=>'order_number', 'data'=>'order_number', 'title'=>'Order Number'],
             ['name'=>'checkout_id', 'data'=>'checkout_id', 'title'=>'Checkout'],
-            ['name'=>'cancelled_at', 'data'=>'cancelled_at', 'title'=>'Cancel At'],
-            ['name'=>'closed_at', 'data'=>'closed_at', 'title'=>'Closed At'],
-            ['name'=>'created_at', 'data'=>'created_at', 'title'=>'Created At'],
-            ['name'=>'updated_at', 'data'=>'updated_at', 'title'=>'Updated At'],
+//            ['name'=>'cancelled_at', 'data'=>'cancelled_at', 'title'=>'Cancel At'],
+//            ['name'=>'closed_at', 'data'=>'closed_at', 'title'=>'Closed At'],
+//            ['name'=>'created_at', 'data'=>'created_at', 'title'=>'Created At'],
+//            ['name'=>'updated_at', 'data'=>'updated_at', 'title'=>'Updated At'],
             ['name'=>'action', 'data'=>'action', 'title'=>'Action', 'exportable'=>false, 'printable'=>false, 'orderable'=>false, 'searchable'=>false],
         ];
     }

@@ -45,7 +45,13 @@ class Order extends Model
 
     public function order_details()
     {
-        return $this->hasMany(OrderDetails::class, 'order_id', 'id');
+        return $this->hasOne(OrderDetails::class, 'id');
+    }
+
+
+    public function orderdetails()
+    {
+        return $this->hasOne(OrderDetails::class,'order_id');
     }
 
 }

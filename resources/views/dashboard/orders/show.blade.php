@@ -1,12 +1,12 @@
 @extends('dashboard.layouts.master')
 
 @section('css')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endsection
 
 @section('pageTitle')
-    الطلبات | {{ $order?->order_id}}
+    الطلب | {{ $order?->order_id}}
 @endsection
 
 @section('content')
@@ -16,7 +16,7 @@
             <div class="card-header border-0 pt-5">
                 <h3 class="card-title align-items-start flex-column">
                     <span class="card-label fw-bolder fs-3 mb-1">
-                        الطلبات
+                        الطلب
                         | {{ $order?->order_id}}
                     </span>
                 </h3>
@@ -31,9 +31,41 @@
                     <div class="card-header cursor-pointer">
                         <!--begin::Card title-->
                         <div class="card-title m-0">
-                            <h3 class="fw-bolder m-0">{{ $order->name }}</h3>
+
+                            <h3 class="fw-bolder m-0">name : {{ $order->name }}</h3>
+                        </div>
+
+                        <div class="card-title m-0">
+
+                            <h5 class="fw-bolder m-0">Subtotal Price : {{ $response['order']['subtotal_price'] }} SAR </h5>
+                        </div>
+
+                        <div class="card-title m-0">
+
+                            <h5 class="fw-bolder m-0">total Price : {{ $response['order']['total_price'] }} SAR </h5>
+                        </div>
+
+                        <div class="card-title m-0">
+
+                            <h5 class="fw-bolder m-0">total Discounts : {{ $response['order']['current_total_discounts'] }} SAR </h5>
+                        </div>
+
+                        <div class="card-title m-0">
+
+                            <h3 class="fw-bolder m-0">
+                                @if(isset($response['order']['fulfillments'][0]))
+                                    <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$order->order_status_url}}"
+                                       target="_blank">{{$response['order']['fulfillments'][0]['tracking_number']}}</a>
+                                    {{--                                        {{$response['order']['fulfillments'][0]['tracking_number']}}--}}
+
+                                @else
+                                    لا يوجد رقم تتبع الشحنه
+                                @endif
+                            </h3>
                         </div>
                     </div>
+
+
                     <!--begin::Card header-->
                     <!--begin::Card body-->
                     <div class="card-body p-9">
@@ -45,6 +77,26 @@
                             <!--begin::Col-->
                             <div class="col-lg-8">
                                 <span class="fw-bolder fs-6 text-gray-800">{{$order->app_id}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Tracking Number</label>
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bolder fs-6 text-gray-800">
+                                @if(isset($response['order']['fulfillments'][0]))
+                                        <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$order->order_status_url}}"
+                                           target="_blank">{{$response['order']['fulfillments'][0]['tracking_number']}}</a>
+{{--                                        {{$response['order']['fulfillments'][0]['tracking_number']}}--}}
+
+                                    @else
+                                    لا يوجد رقم تتبع الشحنه
+                                    @endif
+                                </span>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -65,7 +117,8 @@
                         <div class="row mb-7">
                             <!--begin::Label-->
                             <label class="col-lg-4 fw-bold text-muted">Contact Phone
-                                <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Phone number must be active"></i></label>
+                                <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip"
+                                   title="Phone number must be active"></i></label>
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8 d-flex align-items-center">
@@ -81,7 +134,8 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8">
-                                <a href="#" class="fw-bold fs-6 text-gray-800 text-hover-primary">{{$order->merchant_of_record_app_id}}</a>
+                                <a href="#"
+                                   class="fw-bold fs-6 text-gray-800 text-hover-primary">{{$order->merchant_of_record_app_id}}</a>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -90,7 +144,8 @@
                         <div class="row mb-7">
                             <!--begin::Label-->
                             <label class="col-lg-4 fw-bold text-muted">order_number
-                                <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="order_number"></i></label>
+                                <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip"
+                                   title="order_number"></i></label>
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8">
@@ -106,7 +161,8 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8">
-                                <a class="fw-bolder fs-6 text-gray-800" href="{{$order->order_status_url}}" target="_blank">اضغط للعرض</a>
+                                <a class="fw-bolder fs-6 text-gray-800" href="{{$order->order_status_url}}"
+                                   target="_blank">اضغط للعرض</a>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -179,7 +235,8 @@
                             <!--begin::Col-->
                             <div class="col-lg-8">
                                 @if($order->referring_site != null)
-                                    <a class="fw-bolder fs-6 text-gray-800" href="{{$order->referring_site}}" target="_blank">اضغط للعرض</a>
+                                    <a class="fw-bolder fs-6 text-gray-800" href="{{$order->referring_site}}"
+                                       target="_blank">اضغط للعرض</a>
                                 @else
                                     <span class="fw-bolder fs-6 text-danger-800">لا يوجد رابط</span>
                                 @endif
