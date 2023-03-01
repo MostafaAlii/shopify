@@ -59,7 +59,9 @@
                                     {{--                                        {{$response['order']['fulfillments'][0]['tracking_number']}}--}}
 
                                 @else
-                                    لا يوجد رقم تتبع الشحنه
+                                    <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$order->order_status_url}}"
+                                       target="_blank">  لا يوجد رقم تتبع الشحنه</a>
+
                                 @endif
                             </h3>
                         </div>
@@ -94,7 +96,9 @@
 {{--                                        {{$response['order']['fulfillments'][0]['tracking_number']}}--}}
 
                                     @else
-                                    لا يوجد رقم تتبع الشحنه
+                                        <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$order->order_status_url}}"
+                                           target="_blank">لا يوجد رقم تتبع الشحنه</a>
+
                                     @endif
                                 </span>
                             </div>

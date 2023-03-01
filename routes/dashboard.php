@@ -14,6 +14,7 @@ Route::group(
                 Route::resource('users', Dashboard\UserController::class);
                 Route::resource('orders',Dashboard\OrderController::class);
                 Route::get('order_sync', [Dashboard\OrderController::class, 'orderSync'])->name('ordersSync');
+                Route::get('orders_updated', [Dashboard\OrderController::class, 'orders_updated'])->name('orders_updated');
             });
         });
     require __DIR__.'/auth.php';

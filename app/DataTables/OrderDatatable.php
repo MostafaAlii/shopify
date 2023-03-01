@@ -110,6 +110,12 @@ class OrderDatatable extends DataTable
                             window.location.href = '" . route('ordersSync') . "';
                         }"
                     ],
+
+                    [
+                        'text' => '<i class="fa fa-plus"></i> ' . trans('dashboard/order.orders_updated') , 'className' => 'btn btn-info', "action" => "function(){
+                            window.location.href = '" . route('ordersSync') . "';
+                        }"
+                    ],
                     [
                         'extend'  => 'csv',
                         'className'=> 'btn btn-primary',
