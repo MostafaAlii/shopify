@@ -49,22 +49,43 @@ class Order extends Model
     }
 
     public function scopeGetOrderCountByPaidFinancialStatus($query) {
-        return $query->whereFinancialStatus('paid')->count();
+        return $query->whereFinancialStatus('paid')->get();
     }
+
+    public function scopeGetTotalPriceOfPaidOrders($query) {
+        return $query->getOrderCountByPaidFinancialStatus()->sum('total_price');
+    }
+
     public function scopeGetOrderCountByPendingFinancialStatus($query) {
-        return $query->whereFinancialStatus('pending')->count();
+        return $query->whereFinancialStatus('pending')->get();
+    }
+
+    public function scopeGetTotalPriceOfPendingOrders($query) {
+        return $query->getOrderCountByPendingFinancialStatus()->sum('total_price');
     }
 
     public function scopeGetOrderCountByPartiallyRefundedFinancialStatus($query) {
-        return $query->whereFinancialStatus('partially_refunded')->count();
+        return $query->whereFinancialStatus('partially_refunded')->get();
+    }
+
+    public function scopeGetTotalPriceOfPartiallyRefundedOrders($query) {
+        return $query->getOrderCountByPartiallyRefundedFinancialStatus()->sum('total_price');
     }
 
     public function scopeGetOrderCountByRefundedFinancialStatus($query) {
-        return $query->whereFinancialStatus('refunded')->count();
+        return $query->whereFinancialStatus('refunded')->get();
+    }
+
+    public function scopeGetTotalPriceOfRefundedOrders($query) {
+        return $query->getOrderCountByRefundedFinancialStatus()->sum('total_price');
     }
 
     public function scopeGetOrderCountByVoidedFinancialStatus($query) {
-        return $query->whereFinancialStatus('voided')->count();
+        return $query->whereFinancialStatus('voided')->get();
+    }
+
+    public function scopeGetTotalPriceOfVoidedOrders($query) {
+        return $query->getOrderCountByVoidedFinancialStatus()->sum('total_price');
     }
 
 }

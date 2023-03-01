@@ -47,7 +47,9 @@
                                     <!--end::Svg Icon-->
                                     <a href="#" class="text-dark fw-bold fs-6">
                                         Paid
-                                        <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPaidFinancialStatus()}}</span>
+                                        <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPaidFinancialStatus()->count()}}</span>
+                                        <br>
+                                        total ( {{Order::getTotalPriceOfPaidOrders()}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->
@@ -65,7 +67,9 @@
                                     <!--end::Svg Icon-->
                                     <a href="#" class="text-dark fw-bold fs-6">
                                         Pending
-                                        <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPendingFinancialStatus()}}</span>
+                                        <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPendingFinancialStatus()->count()}}</span>
+                                        <br>
+                                        total ( {{Order::getTotalPriceOfPendingOrders()}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->
@@ -87,7 +91,9 @@
                                     <!--end::Svg Icon-->
                                     <a href="#" class="text-dark fw-bold fs-6 mt-2">
                                         Partially Refunded <br>
-                                        <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPartiallyRefundedFinancialStatus()}}</span>
+                                        <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPartiallyRefundedFinancialStatus()->count()}}</span>
+                                        <br>
+                                        total ( {{Order::getTotalPriceOfPartiallyRefundedOrders()}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->
@@ -105,7 +111,9 @@
                                     <!--end::Svg Icon-->
                                     <a href="#" class="text-dark fw-bold fs-6 mt-2">
                                         Refunded
-                                        <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByRefundedFinancialStatus()}}</span>
+                                        <span class="text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByRefundedFinancialStatus()->count()}}</span>
+                                        <br>
+                                        total ( {{Order::getTotalPriceOfRefundedOrders()}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->
@@ -127,7 +135,8 @@
                                         <!--end::Svg Icon-->
                                     <a href="#" class="text-light text-lg-center pull-left fw-bold fs-7 mt-3">
                                         Voided
-                                        <span class="text-gray-50 fs-8 fw-bold ms-2">{{Order::getOrderCountByVoidedFinancialStatus()}}</span>
+                                        <span class="text-gray-50 fs-8 fw-bold ms-2">{{Order::getOrderCountByVoidedFinancialStatus()->count()}}</span>
+                                        total ( {{Order::getTotalPriceOfVoidedOrders()}} $ )
                                     </a>
                                 </div>
                                 <!--end::Col-->
