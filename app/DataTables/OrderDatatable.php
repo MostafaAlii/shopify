@@ -84,7 +84,7 @@ class OrderDatatable extends DataTable
      */
     public function query()
     {
-        return Order::orderByRaw('FIELD(financial_status, "paid", "pending", "partially_refunded", "refunded", "voided")')->latest('id');
+        return Order::query()->orderByDesc('order_id');
     }
 
     /**

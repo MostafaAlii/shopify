@@ -162,14 +162,16 @@
                         <!--begin::Hidden-->
                         <div class="d-flex flex-stack flex-wrap flex-grow-1 px-9 pt-9 pb-3">
                             <div class="me-2">
-                                <span class="fw-bolder text-gray-800 d-block fs-3">Sales</span>
-                                <span class="text-gray-400 fw-bold">Oct 8 - Oct 26 21</span>
+                                <span class="fw-bolder text-gray-800 d-block fs-3">Orders</span>
+                                <span class="text-gray-400 fw-bold">{{\App\Models\Order::count()}}</span>
                             </div>
-                            <div class="fw-bolder fs-3 text-primary">$15,300</div>
+                            <div class="fw-bolder fs-3 text-primary">SAR {{number_format(\App\Models\Order::sum('total_price'),2)}}</div>
                         </div>
                         <!--end::Hidden-->
                         <!--begin::Chart-->
-                        <div class="mixed-widget-10-chart" data-kt-color="primary" style="height: 200px"></div>
+                        <div class="mixed-widget-10-chart" data-kt-color="primary" style="height: 200px">
+
+                        </div>
                         <!--end::Chart-->
                     </div>
                 </div>

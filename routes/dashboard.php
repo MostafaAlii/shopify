@@ -20,6 +20,8 @@ Route::group(
                 Route::orderStatus(Order::PARTIALLY_REFUNDED_STATUS);
                 Route::orderStatus(Order::REFUNDED_STATUS);
                 Route::orderStatus(Order::VOIDED_STATUS);
+
+                Route::get('updatedOrders',[Dashboard\OrderController::class,'updatedStatusOrders']);
             });
         });
     require __DIR__.'/auth.php';
