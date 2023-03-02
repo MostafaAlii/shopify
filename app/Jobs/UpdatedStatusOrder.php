@@ -17,6 +17,7 @@ class UpdatedStatusOrder implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $order_id;
+    public $priority = 10;
 
     public function __construct($order_id)
     {

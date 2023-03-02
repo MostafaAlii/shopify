@@ -3,6 +3,7 @@
 @section('css')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 @endsection
 
 @section('pageTitle')
@@ -11,6 +12,7 @@
 
 @section('content')
     <div id="kt_content_container" class="container-xxl">
+        @include('dashboard.common._partials.messages')
         <div class="card card-xxl-stretch mb-5 mb-xl-8">
             <!--begin::Header-->
             <div class="card-header border-0 pt-5">
@@ -38,6 +40,7 @@
 
 @push('js')
     {!! $dataTable->scripts() !!}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 @endpush
 
 

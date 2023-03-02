@@ -106,102 +106,118 @@ class OrderController extends Controller
 
     public function orderSync()
     {
-        $responses = Http::pool(fn(Pool $pool) => [
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=any'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&since_id=1'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=open'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=closed'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=cancelled'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=any'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=any'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=shipped'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=partial'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=unshipped'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=unfulfilled'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=authorized'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=pending'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=paid'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=partially_paid'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=refunded'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=voided'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=partially_refunded'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=any'),
-            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=unpaid'),
-        ]);
-        if ($responses[0]->ok() && $responses[1]->ok() && $responses[2]->ok() && $responses[3]->ok() && $responses[4]->ok() && $responses[5]->ok() && $responses[6]->ok() && $responses[7]->ok() && $responses[8]->ok() && $responses[9]->ok() && $responses[10]->ok() && $responses[11]->ok() && $responses[12]->ok() && $responses[1]->ok() && $responses[14]->ok() && $responses[15]->ok() && $responses[16]->ok() && $responses[17]->ok() && $responses[18]->ok() && $responses[19]->ok() && $responses[20]->ok() && $responses[21]->ok()) {
-            foreach (array_merge($responses[0]['orders'], $responses[1]['orders'], $responses[2]['orders'], $responses[3]['orders'], $responses[4]['orders'], $responses[5]['orders'], $responses[6]['orders'], $responses[7]['orders'], $responses[8]['orders'], $responses[9]['orders'], $responses[10]['orders'], $responses[11]['orders'], $responses[12]['orders'], $responses[13]['orders'], $responses[14]['orders'], $responses[15]['orders'], $responses[16]['orders'], $responses[17]['orders'], $responses[18]['orders'], $responses[19]['orders'], $responses[20]['orders'], $responses[21]['orders']) as $response) {
-                $order = DB::table('orders')->where('order_id', $response['id'])->first();
-                if (!$order) {
-                    DB::table('orders')->insert([
-                        'order_id' => $response['id'],
-                        'admin_graphql_api_id' => $response['admin_graphql_api_id'] ?? null,
-                        'app_id' => $response['app_id'] ?? null,
-                        'browser_ip' => $response['browser_ip'] ?? null,
-                        'buyer_accepts_marketing' => $response['buyer_accepts_marketing'] ?? null,
-                        'cancel_reason' => $response['cancel_reason'] ?? null,
-                        'cancelled_at' => $response['cancelled_at'] ?? null,
-                        'cart_token' => $response['cart_token'] ?? null,
-                        'checkout_id' => $response['checkout_id'] ?? null,
-                        'checkout_token' => $response['checkout_token'] ?? null,
-                        'closed_at' => $response['closed_at'] ?? null,
-                        'confirmed' => $response['confirmed'] ?? null,
-                        'contact_email' => $response['contact_email'] ?? null,
-                        'currency' => $response['currency'] ?? null,
+        try {
+            $responses = Http::pool(fn(Pool $pool) => [
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=any'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&since_id=1'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=open'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=closed'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=cancelled'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=any'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=any'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=shipped'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=partial'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=unshipped'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=unfulfilled'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=authorized'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=pending'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=paid'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=partially_paid'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=refunded'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=voided'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=partially_refunded'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=any'),
+                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=unpaid'),
+            ]);
+            if ($responses[0]->ok() && $responses[1]->ok() && $responses[2]->ok() && $responses[3]->ok() && $responses[4]->ok() && $responses[5]->ok() && $responses[6]->ok() && $responses[7]->ok() && $responses[8]->ok() && $responses[9]->ok() && $responses[10]->ok() && $responses[11]->ok() && $responses[12]->ok() && $responses[1]->ok() && $responses[14]->ok() && $responses[15]->ok() && $responses[16]->ok() && $responses[17]->ok() && $responses[18]->ok() && $responses[19]->ok() && $responses[20]->ok() && $responses[21]->ok()) {
+                foreach (array_merge($responses[0]['orders'], $responses[1]['orders'], $responses[2]['orders'], $responses[3]['orders'], $responses[4]['orders'], $responses[5]['orders'], $responses[6]['orders'], $responses[7]['orders'], $responses[8]['orders'], $responses[9]['orders'], $responses[10]['orders'], $responses[11]['orders'], $responses[12]['orders'], $responses[13]['orders'], $responses[14]['orders'], $responses[15]['orders'], $responses[16]['orders'], $responses[17]['orders'], $responses[18]['orders'], $responses[19]['orders'], $responses[20]['orders'], $responses[21]['orders']) as $response) {
+                    $order = DB::table('orders')->where('order_id', $response['id'])->first();
+                    if (!$order) {
+                        DB::table('orders')->insert([
+                            'order_id' => $response['id'],
+                            'admin_graphql_api_id' => $response['admin_graphql_api_id'] ?? null,
+                            'app_id' => $response['app_id'] ?? null,
+                            'browser_ip' => $response['browser_ip'] ?? null,
+                            'buyer_accepts_marketing' => $response['buyer_accepts_marketing'] ?? null,
+                            'cancel_reason' => $response['cancel_reason'] ?? null,
+                            'cancelled_at' => $response['cancelled_at'] ?? null,
+                            'cart_token' => $response['cart_token'] ?? null,
+                            'checkout_id' => $response['checkout_id'] ?? null,
+                            'checkout_token' => $response['checkout_token'] ?? null,
+                            'closed_at' => $response['closed_at'] ?? null,
+                            'confirmed' => $response['confirmed'] ?? null,
+                            'contact_email' => $response['contact_email'] ?? null,
+                            'currency' => $response['currency'] ?? null,
 //                        'tracking_number' =>  array_key_exists('tracking_number',$response['fulfillments']) == true ? $response['fulfillments']['tracking_number'] : null ,
-                        'current_subtotal_price' => $response['current_subtotal_price'] ?? null,
-                        'current_total_discounts' => $response['current_total_discounts'] ?? null,
-                        'current_total_duties_set' => $response['current_total_duties_set'] ?? null,
-                        'current_total_tax' => $response['current_total_tax'] ?? null,
-                        'customer_locale' => $response['customer_locale'] ?? null,
-                        'device_id' => $response['device_id'] ?? null,
-                        'email' => $response['email'] ?? null,
-                        'estimated_taxes' => $response['estimated_taxes'] ?? null,
-                        'financial_status' => $response['financial_status'] ?? null,
-                        'fulfillment_status' => $response['fulfillment_status'] ?? null,
-                        'gateway' => $response['gateway'] ?? null,
-                        'landing_site' => $response['landing_site'] ?? null,
-                        'landing_site_ref' => $response['landing_site_ref'] ?? null,
-                        'location_id' => $response['location_id'] ?? null,
-                        'merchant_of_record_app_id' => $response['merchant_of_record_app_id'] ?? null,
-                        'name' => $response['name'] ?? null,
-                        'note' => $response['note'] ?? null,
-                        'number' => $response['number'] ?? null,
-                        'order_number' => $response['order_number'] ?? null,
-                        'order_status_url' => $response['order_status_url'] ?? null,
-                        'original_total_duties_set' => $response['original_total_duties_set'] ?? null,
+                            'current_subtotal_price' => $response['current_subtotal_price'] ?? null,
+                            'current_total_discounts' => $response['current_total_discounts'] ?? null,
+                            'current_total_duties_set' => $response['current_total_duties_set'] ?? null,
+                            'current_total_tax' => $response['current_total_tax'] ?? null,
+                            'customer_locale' => $response['customer_locale'] ?? null,
+                            'device_id' => $response['device_id'] ?? null,
+                            'email' => $response['email'] ?? null,
+                            'estimated_taxes' => $response['estimated_taxes'] ?? null,
+                            'financial_status' => $response['financial_status'] ?? null,
+                            'fulfillment_status' => $response['fulfillment_status'] ?? null,
+                            'gateway' => $response['gateway'] ?? null,
+                            'landing_site' => $response['landing_site'] ?? null,
+                            'landing_site_ref' => $response['landing_site_ref'] ?? null,
+                            'location_id' => $response['location_id'] ?? null,
+                            'merchant_of_record_app_id' => $response['merchant_of_record_app_id'] ?? null,
+                            'name' => $response['name'] ?? null,
+                            'note' => $response['note'] ?? null,
+                            'number' => $response['number'] ?? null,
+                            'order_number' => $response['order_number'] ?? null,
+                            'order_status_url' => $response['order_status_url'] ?? null,
+                            'original_total_duties_set' => $response['original_total_duties_set'] ?? null,
 //                        'payment_gateway_names' => explode(',',$response['payment_gateway_names'])  ?? null,
-                        'phone' => $response['phone'] ?? null,
-                        'presentment_currency' => $response['presentment_currency'] ?? null,
-                        'processed_at' => $response['processed_at'] ?? null,
-                        'processing_method' => $response['processing_method'] ?? null,
-                        'reference' => $response['reference'] ?? null,
-                        'referring_site' => $response['referring_site'] ?? null,
-                        'source_identifier' => $response['source_identifier'] ?? null,
-                        'source_name' => $response['source_name'] ?? null,
-                        'source_url' => $response['source_url'] ?? null,
-                        'subtotal_price' => $response['subtotal_price'] ?? null,
-                        'tags' => $response['tags'] ?? null,
+                            'phone' => $response['phone'] ?? null,
+                            'presentment_currency' => $response['presentment_currency'] ?? null,
+                            'processed_at' => $response['processed_at'] ?? null,
+                            'processing_method' => $response['processing_method'] ?? null,
+                            'reference' => $response['reference'] ?? null,
+                            'referring_site' => $response['referring_site'] ?? null,
+                            'source_identifier' => $response['source_identifier'] ?? null,
+                            'source_name' => $response['source_name'] ?? null,
+                            'source_url' => $response['source_url'] ?? null,
+                            'subtotal_price' => $response['subtotal_price'] ?? null,
+                            'tags' => $response['tags'] ?? null,
 //                        'tax_lines' => $response['tax_lines'] ?? null,
-                        'taxes_included' => $response['taxes_included'] ?? null,
-                        'test' => $response['test'] ?? null,
-                        'token' => $response['token'] ?? null,
-                        'total_discounts' => $response['total_discounts'] ?? null,
-                        'total_line_items_price' => $response['total_line_items_price'] ?? null,
-                        'total_price' => $response['total_price'] ?? null,
-                        'total_tax' => $response['total_tax'] ?? null,
-                        'total_tip_received' => $response['total_tip_received'] ?? null,
-                        'total_weight' => $response['total_weight'] ?? null,
-                        'user_id' => $response['user_id'] ?? null,
+                            'taxes_included' => $response['taxes_included'] ?? null,
+                            'test' => $response['test'] ?? null,
+                            'token' => $response['token'] ?? null,
+                            'total_discounts' => $response['total_discounts'] ?? null,
+                            'total_line_items_price' => $response['total_line_items_price'] ?? null,
+                            'total_price' => $response['total_price'] ?? null,
+                            'total_tax' => $response['total_tax'] ?? null,
+                            'total_tip_received' => $response['total_tip_received'] ?? null,
+                            'total_weight' => $response['total_weight'] ?? null,
+                            'user_id' => $response['user_id'] ?? null,
 //                        'payment_terms' => $response['payment_terms'] ?? null,
 //                        'refunds' => $response['refunds'] ?? null,
-                    ]);
+                        ]);
+                    }
                 }
+                $notification = array(
+                    'message' => 'تم مزامنة الطلبات بنجاح',
+                    'alert-type' => 'success'
+                );
+                return redirect()->back()->with($notification);
+            } else {
+                $notification = array(
+                    'message' => 'حدث خطأ ما يرجى المحاولة مرة اخرى',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
             }
-            return redirect()->back()->with('success', 'Orders synced successfully');
-        } else {
-            return redirect()->back()->with('error', 'Something went wrong');
+        } catch (\Exception $e) {
+            $notification = array(
+                'message' => 'حدث خطأ ما يرجى المحاولة مرة اخرى',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
         }
     }
 
@@ -227,12 +243,31 @@ class OrderController extends Controller
 //            }
 //        });
 
-        $orders = DB::table('orders')->select('id', 'order_id')->get();
+        /*$orders = DB::table('orders')->select('id', 'order_id')->get();
 //        Artisan::call('queue:work');
         UpdatedStatusOrder::dispatch($orders)->delay(now()->addSeconds(8));
 
 
-        return "ok";
+        return "ok";*/
+        try {
+            $orders = DB::table('orders')->select('id', 'order_id')->get();
+            UpdatedStatusOrder::dispatch($orders)->delay(now()->addSeconds(8));
+            $notification = array(
+                'message' => 'تم تحديث الطلبات بنجاح',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        } catch (\Exception $e) {
+            $notification = array(
+                'message' => 'حدث خطأ ما يرجى المحاولة مرة اخرى',
+                'alert-type' => 'error'
+            );
+            Artisan::call('queue:restart');
+            return redirect()->back()->with($notification);
+        } finally {
+            sleep(8);
+            exec('php artisan queue:work my_queue --stop-when-empty');
+        }
     }
 
 
