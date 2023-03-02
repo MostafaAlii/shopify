@@ -273,19 +273,20 @@ class OrderController extends Controller
             $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order_id)->first();
             $tracking_number = null;
 
-            if (isset($response['order']['fulfillments']) && !empty($response['order']['fulfillments'])) {
-                $tracking_number = $response['order']['fulfillments'][0]['tracking_number'] ?? null;
+            if (isset($response['order'][0]['fulfillments']) && !empty($response['order'][0]['fulfillments'])) {
+//                $tracking_number = $response['order']['fulfillments'][0]['tracking_number'] ?? null;
+                if ($updateOrCreateOrderDetails) {
+                    DB::table('order_details')->where('order_id', $order->id)->update([
+                        'tracking_number' => $response['order'][0]['fulfillments']
+                    ]);
+                } else {
+                    DB::table('order_details')->insert([
+                        'order_id' => $order->id,
+                        'tracking_number' => $tracking_number,
+                    ]);
+                }
             }
-            if ($updateOrCreateOrderDetails) {
-                DB::table('order_details')->where('order_id', $order->id)->update([
-                    'tracking_number' => $tracking_number
-                ]);
-            } else {
-                DB::table('order_details')->insert([
-                    'order_id' => $order->id,
-                    'tracking_number' => $tracking_number,
-                ]);
-            }
+
             return view('dashboard.orders.show', ['order' => $order, 'response' => $response]);
         }
         //return view('dashboard.orders.show', ['order' => $order, 'response' => $response]);
