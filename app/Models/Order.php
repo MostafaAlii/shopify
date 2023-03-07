@@ -15,6 +15,7 @@ class Order extends Model
     const REFUNDED_STATUS = 'refunded';
     const VOIDED_STATUS = 'voided';
     protected $guarded = [];
+    public $timestamps = false;
     protected $casts = [
         'current_subtotal_price_set' => 'array',
         'current_total_discounts_set' => 'array',

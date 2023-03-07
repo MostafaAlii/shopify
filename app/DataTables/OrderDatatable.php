@@ -51,7 +51,7 @@ class OrderDatatable extends DataTable
                     return '<span class="badge badge-' . $badge . '">No Closed Data</span>';
                 return '<span class="badge badge-' . $badge . '">' . $order->closed_at . '</span>';
             })
-            ->editColumn('created_at', function($order) {
+            /*->editColumn('created_at', function($order) {
                 $badge = $order->created_at == null ? 'danger' : 'success';
                 if ($order->created_at == null)
                     return '<span class="badge badge-' . $badge . '">No Created Data</span>';
@@ -62,7 +62,7 @@ class OrderDatatable extends DataTable
                 if ($order->updated_at == null)
                     return '<span class="badge badge-' . $badge . '">No Updated Data</span>';
                 return '<span class="badge badge-' . $badge . '">' . $order->updated_at->diffForHumans() . '</span>';
-            })
+            })*/
             ->rawColumns([
                 'financial_status',
                 'checkout_id',
@@ -71,8 +71,8 @@ class OrderDatatable extends DataTable
                 'order_id',
                 'cancelled_at',
                 'closed_at',
-                'created_at',
-                'updated_at',
+                //'created_at',
+                //'updated_at',
             ]);
     }
 
@@ -125,6 +125,11 @@ class OrderDatatable extends DataTable
                         'extend'  => 'excel',
                         'className'=> 'btn btn-success',
                         'text'     => "<i class='fa fa-file'></i>". trans('dashboard/datetable.ex_excel')
+                    ],
+                    [
+                        'text' => '<i class="fa fa-plus"></i> ' . trans('dashboard/datetable.excel_upload') , 'className' => 'btn btn-warning', "action" => "function(){
+                            window.location.href = '" . route('orders_upload') . "';
+                        }"
                     ],
                     [
                         'extend'  => 'print',

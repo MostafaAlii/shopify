@@ -15,6 +15,8 @@ Route::group(
                 Route::resource('orders',Dashboard\OrderController::class);
                 Route::get('order_sync', [Dashboard\OrderController::class, 'orderSync'])->name('ordersSync');
                 Route::get('orders_updated', [Dashboard\OrderController::class, 'orders_updated'])->name('orders_updated');
+                Route::get('orders_upload', [Dashboard\OrderController::class, 'orders_upload'])->name('orders_upload');
+                Route::post('orders/excel/upload', [Dashboard\OrderController::class, 'orders_excel_upload'])->name('orders_excel_upload');
                 Route::orderStatus(Order::PAID_STATUS);
                 Route::orderStatus(Order::PENDING_STATUS);
                 Route::orderStatus(Order::PARTIALLY_REFUNDED_STATUS);

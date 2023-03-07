@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Http\Controllers\Controller;
-use App\Jobs\UpdatedStatusOrder;
 use App\Models\Order;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
+use App\Jobs\UpdatedStatusOrder;
 use Illuminate\Http\Client\Pool;
-use Illuminate\Support\Facades\Http;
 use App\DataTables\OrderDatatable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Artisan;
 use App\DataTables\OrderStatusDataTable;
+use App\Jobs\OrdersExcelProcess;
 
 class OrderController extends Controller
 {
@@ -365,5 +367,64 @@ class OrderController extends Controller
     {
         $status = request()->segment(count(request()->segments()));
         return $dataTable->render('dashboard.orders.index', ['status' => ucfirst($status), 'pageTitle' => 'الطلبات']);
+    }
+
+    public function orders_upload() {
+        return view('dashboard.orders.upload');
+    }
+
+    public function orders_excel_upload(Request $request) {
+        try {
+            if($request->has('csvFile') && $request->hasFile('csvFile') && $request->file('csvFile')->isValid()) {
+                $filename = $request->csvFile->getClientOriginalName();
+                $fileWithPath = public_path('uploads' . '/' . $filename);
+                if (!file_exists(public_path('uploads')))
+                    mkdir(public_path('uploads'), 0777, true);
+                if(!file_exists($fileWithPath))
+                    $request->csvFile->move(public_path('uploads'), $filename);
+
+                $header = null;
+                $dataFromCsv = array();
+                $records = array_map('str_getcsv', file($fileWithPath));
+                foreach ($records as $record) {
+                    if (!$header)
+                        $header = $record;
+                    else {
+                        $data = array();
+                        foreach ($header as $index => $key) {
+                            if (isset($record[$index])) {
+                                $data[$key] = $record[$index];
+                            } else {
+                                $data[$key] = null;
+                            }
+                        }
+                        $dataFromCsv[] = $data;
+                    }
+                }
+                $dataFromCsv = array_chunk($dataFromCsv, 250);
+                foreach ($dataFromCsv as $index => $dataCsv) {
+                    foreach ($dataCsv as $data) {
+                        if (count($header) == count($data)) 
+                            $orderData[$index][] = array_combine($header, $data);
+                        else 
+                            throw new \Exception("عدد العناصر في المصفوفتين غير متساوٍ." . count($header) . ' - ' . count($data));
+                        
+                    }
+                    OrdersExcelProcess::dispatch($orderData[$index]);
+                }
+            }
+            $notification = array(
+                'message' => 'تم رفع الطلبات بنجاح',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            $notification = array(
+                'message' => 'حدث خطأ ما يرجى المحاولة مرة اخرى',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        } 
     }
 }

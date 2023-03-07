@@ -28,5 +28,6 @@ return [
     'reset'                        => 'إعادة تعيين',
     'print'                        => 'طباعة',
     'delete_all'				   => 'حذف جماعى',
+    'excel_upload'				   => 'رفع ملف اكسل',
 
 ];
