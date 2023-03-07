@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Artisan;
 use App\DataTables\OrderStatusDataTable;
 use App\Jobs\OrdersExcelProcess;
 
+use function Pest\Laravel\artisan;
+
 class OrderController extends Controller
 {
 

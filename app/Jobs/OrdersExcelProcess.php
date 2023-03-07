@@ -27,7 +27,7 @@ class OrdersExcelProcess implements ShouldQueue
     public function handle() {
         foreach ($this->orderData as $orderData) {
             $order = new Order();
-            $order->order_id = $orderData['Name'];
+            $order->name = $orderData['Name'];
             $order->email = $orderData['Email'];
             $order->financial_status = $orderData['Financial Status'];
             $order->paid_at = $orderData['Paid at'];

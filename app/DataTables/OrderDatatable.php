@@ -23,7 +23,9 @@ class OrderDatatable extends DataTable
             ->eloquent($query)
             ->addColumn('action', 'dashboard.orders.btn.action')
             ->editColumn('order_id', function ($order) {
-                return '<span class="badge badge-primary"><a class="text-light" href="' . route('orders.show', $order->order_id) . '" target="_blank">' . $order->order_id . '</a></span>';
+                if($order->order_id != null)
+                    return '<span class="badge badge-primary"><a class="text-light" href="' . route('orders.show', $order->order_id) . '" target="_blank">' . $order->order_id . '</a></span>';
+                return '<span class="badge badge-danger">No Order ID</span>';
             })
             ->editColumn('financial_status', function($order) {
                 $badge = $order->financial_status == 'pending' ? 'warning' : 'success';
