@@ -4,19 +4,21 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Imports\OrdersImport;
+use App\Jobs\OrdersExcelProcess;
 use App\Jobs\UpdatedStatusOrder;
 use Illuminate\Http\Client\Pool;
 use App\DataTables\OrderDatatable;
+use function Pest\Laravel\artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use Maatwebsite\Excel\Facades\Excel;
+
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Artisan;
 use App\DataTables\OrderStatusDataTable;
-use App\Jobs\OrdersExcelProcess;
-
-use function Pest\Laravel\artisan;
 
 class OrderController extends Controller
 {
@@ -154,12 +156,12 @@ class OrderController extends Controller
                             'confirmed' => $response['confirmed'] ?? null,
                             'contact_email' => $response['contact_email'] ?? null,
                             'currency' => $response['currency'] ?? null,
-//                        'tracking_number' =>  array_key_exists('tracking_number',$response['fulfillments']) == true ? $response['fulfillments']['tracking_number'] : null ,
+                            'tracking_number' => isset($response['fulfillments'][0])  ? $response['fulfillments'][0]['tracking_number'] :  null,
                             'current_subtotal_price' => $response['current_subtotal_price'] ?? null,
                             'current_total_discounts' => $response['current_total_discounts'] ?? null,
                             'current_total_duties_set' => $response['current_total_duties_set'] ?? null,
                             'current_total_tax' => $response['current_total_tax'] ?? null,
-                            'customer_locale' => $response['customer_locale'] ?? null,
+                            'customer_locale' => $response['customer']['first_name'] . ' ' .  $response['customer']['last_name'] ?? null,
                             'device_id' => $response['device_id'] ?? null,
                             'email' => $response['email'] ?? null,
                             'estimated_taxes' => $response['estimated_taxes'] ?? null,
@@ -376,57 +378,12 @@ class OrderController extends Controller
     }
 
     public function orders_excel_upload(Request $request) {
-        try {
-            if($request->has('csvFile') && $request->hasFile('csvFile') && $request->file('csvFile')->isValid()) {
-                $filename = $request->csvFile->getClientOriginalName();
-                $fileWithPath = public_path('uploads' . '/' . $filename);
-                if (!file_exists(public_path('uploads')))
-                    mkdir(public_path('uploads'), 0777, true);
-                if(!file_exists($fileWithPath))
-                    $request->csvFile->move(public_path('uploads'), $filename);
-
-                $header = null;
-                $dataFromCsv = array();
-                $records = array_map('str_getcsv', file($fileWithPath));
-                foreach ($records as $record) {
-                    if (!$header)
-                        $header = $record;
-                    else {
-                        $data = array();
-                        foreach ($header as $index => $key) {
-                            if (isset($record[$index])) {
-                                $data[$key] = $record[$index];
-                            } else {
-                                $data[$key] = null;
-                            }
-                        }
-                        $dataFromCsv[] = $data;
-                    }
-                }
-                $dataFromCsv = array_chunk($dataFromCsv, 250);
-                foreach ($dataFromCsv as $index => $dataCsv) {
-                    foreach ($dataCsv as $data) {
-                        if (count($header) == count($data)) 
-                            $orderData[$index][] = array_combine($header, $data);
-                        else 
-                            throw new \Exception("عدد العناصر في المصفوفتين غير متساوٍ." . count($header) . ' - ' . count($data));
-                        
-                    }
-                    OrdersExcelProcess::dispatch($orderData[$index]);
-                }
-            }
-            $notification = array(
-                'message' => 'تم رفع الطلبات بنجاح',
+        Excel::import(new OrdersImport, $request->csvFile);
+        $notification = array(
+                'message' => 'تم تحديث الطلبات بنجاح',
                 'alert-type' => 'success'
             );
-            return redirect()->back()->with($notification);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            $notification = array(
-                'message' => 'حدث خطأ ما يرجى المحاولة مرة اخرى',
-                'alert-type' => 'error'
-            );
-            return redirect()->back()->with($notification);
-        } 
+    
+        return redirect()->route('orders.index')->with($notification);
     }
 }

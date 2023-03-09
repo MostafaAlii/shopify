@@ -22,9 +22,9 @@ class OrderDatatable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addColumn('action', 'dashboard.orders.btn.action')
-            ->editColumn('order_id', function ($order) {
-                if($order->order_id != null)
-                    return '<span class="badge badge-primary"><a class="text-light" href="' . route('orders.show', $order->order_id) . '" target="_blank">' . $order->order_id . '</a></span>';
+            ->editColumn('name', function ($order) {
+                if($order->name != null)
+                    return '<span class="badge badge-primary"><a class="text-light" href="' . route('orders.show', $order->order_id) . '" target="_blank">' . $order->name . '</a></span>';
                 return '<span class="badge badge-danger">No Order ID</span>';
             })
             ->editColumn('financial_status', function($order) {
@@ -53,6 +53,12 @@ class OrderDatatable extends DataTable
                     return '<span class="badge badge-' . $badge . '">No Closed Data</span>';
                 return '<span class="badge badge-' . $badge . '">' . $order->closed_at . '</span>';
             })
+            ->editColumn('tracking_number', function($order) {
+                $tracking_number = $order->tracking_number == null ? 'danger' : 'success';
+                if ($order->tracking_number == null)
+                    return '<span class="badge badge-' . $tracking_number . '">No tracking Number</span>';
+                return '<span class="badge badge-' . $tracking_number . '">' . $order->tracking_number . '</span>';
+            })
             /*->editColumn('created_at', function($order) {
                 $badge = $order->created_at == null ? 'danger' : 'success';
                 if ($order->created_at == null)
@@ -70,8 +76,9 @@ class OrderDatatable extends DataTable
                 'checkout_id',
                 'gateway',
                 'action',
-                'order_id',
+                'name',
                 'cancelled_at',
+                'tracking_number',
                 'closed_at',
                 //'created_at',
                 //'updated_at',
@@ -128,11 +135,11 @@ class OrderDatatable extends DataTable
                         'className'=> 'btn btn-success',
                         'text'     => "<i class='fa fa-file'></i>". trans('dashboard/datetable.ex_excel')
                     ],
-                    [
+                    /*[
                         'text' => '<i class="fa fa-plus"></i> ' . trans('dashboard/datetable.excel_upload') , 'className' => 'btn btn-warning', "action" => "function(){
                             window.location.href = '" . route('orders_upload') . "';
                         }"
-                    ],
+                    ],*/
                     [
                         'extend'  => 'print',
                         'className'=> 'btn btn-info',
@@ -171,24 +178,28 @@ class OrderDatatable extends DataTable
     protected function getColumns() {
         return [
             ['name'=>'id', 'data'=>'id', 'title'=>'#',],
-            ['name'=>'order_id', 'data'=>'order_id', 'title'=>'Order Id'],
+//            ['name'=>'order_id', 'data'=>'order_id', 'title'=>'Order Id'],
             ['name'=>'name', 'data'=>'name', 'title'=>'Name'],
-            ['name'=>'contact_email', 'data'=>'contact_email', 'title'=>'Contact Email'],
-            ['name'=>'email', 'data'=>'email', 'title'=>'Email'],
-            ['name'=>'phone', 'data'=>'phone', 'title'=>'Phone'],
-            ['name'=>'total_price', 'data'=>'total_price', 'title'=>'Total Price'],
-            ['name'=>'currency', 'data'=>'currency', 'title'=>'Currency'],
-            ['name'=>'financial_status', 'data'=>'financial_status', 'title'=>'Financial Status'],
-            ['name'=>'fulfillment_status', 'data'=>'fulfillment_status', 'title'=>'Fulfillment Status'],
+//            ['name'=>'contact_email', 'data'=>'contact_email', 'title'=>'Contact Email'],
+//            ['name'=>'email', 'data'=>'email', 'title'=>'Email'],
+//            ['name'=>'phone', 'data'=>'phone', 'title'=>'Phone'],
+//            ['name'=>'total_price', 'data'=>'total_price', 'title'=>'Total Price'],
+//            ['name'=>'currency', 'data'=>'currency', 'title'=>'Currency'],
+//            ['name'=>'financial_status', 'data'=>'financial_status', 'title'=>'Financial Status'],
+//            ['name'=>'fulfillment_status', 'data'=>'fulfillment_status', 'title'=>'Fulfillment Status'],
             ['name'=>'gateway', 'data'=>'gateway', 'title'=>'Gateway'],
-            ['name'=>'number', 'data'=>'number', 'title'=>'Number'],
-            ['name'=>'order_number', 'data'=>'order_number', 'title'=>'Order Number'],
-            ['name'=>'checkout_id', 'data'=>'checkout_id', 'title'=>'Checkout'],
+            ['name'=>'financial_status', 'data'=>'financial_status', 'title'=>'Financial Status'],
+            ['name'=>'total_price', 'data'=>'total_price', 'title'=>'Total Price'],
+            ['name'=>'customer_locale', 'data'=>'customer_locale', 'title'=>'customer name'],
+            ['name'=>'tracking_number', 'data'=>'tracking_number', 'title'=>'tracking number'],
+//            ['name'=>'number', 'data'=>'number', 'title'=>'Number'],
+//            ['name'=>'order_number', 'data'=>'order_number', 'title'=>'Order Number'],
+//            ['name'=>'checkout_id', 'data'=>'checkout_id', 'title'=>'Checkout'],
 //            ['name'=>'cancelled_at', 'data'=>'cancelled_at', 'title'=>'Cancel At'],
 //            ['name'=>'closed_at', 'data'=>'closed_at', 'title'=>'Closed At'],
 //            ['name'=>'created_at', 'data'=>'created_at', 'title'=>'Created At'],
 //            ['name'=>'updated_at', 'data'=>'updated_at', 'title'=>'Updated At'],
-            ['name'=>'action', 'data'=>'action', 'title'=>'Action', 'exportable'=>false, 'printable'=>false, 'orderable'=>false, 'searchable'=>false],
+//            ['name'=>'action', 'data'=>'action', 'title'=>'Action', 'exportable'=>false, 'printable'=>false, 'orderable'=>false, 'searchable'=>false],
         ];
     }
 
