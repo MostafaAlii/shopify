@@ -33,15 +33,20 @@ class UpdatedStatusOrder implements ShouldQueue
     {
 
         foreach ($this->order_id as $order) {
-            $response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders/' . $order->order_id . '.json');
+            $response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?name=' . substr($order->name, 1));
             if ($response->ok()) {
-                if (isset($response['order']['fulfillments']) && !empty($response['order']['fulfillments'])) {
+                if (isset($response['orders'][0]['fulfillments']) && !empty($response['orders'][0]['fulfillments'])) {
+                    DB::table('orders')->where('id', $order->id)->whereNull('order_id')->update([
+                        'order_id' =>  $response['orders'][0]['id'],
+                        'tracking_number' => $response['orders'][0]['fulfillments'][0]['tracking_number'],
+                    ]);
+
                     $order_tracking_number = DB::table('order_details')->where('order_id', $order->id)->whereNotNull('tracking_number')->first();
 
                     if (!$order_tracking_number) {
                         DB::table('order_details')->insert([
                             'order_id' => $order->id,
-                            'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
+                            'tracking_number' => $response['orders'][0]['fulfillments'][0]['tracking_number'],
                         ]);
                     }
                 }

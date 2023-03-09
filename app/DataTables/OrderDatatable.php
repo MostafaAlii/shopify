@@ -24,7 +24,7 @@ class OrderDatatable extends DataTable
             ->addColumn('action', 'dashboard.orders.btn.action')
             ->editColumn('name', function ($order) {
                 if($order->name != null)
-                    return '<span class="badge badge-primary"><a class="text-light" href="' . route('orders.show', $order->order_id) . '" target="_blank">' . $order->name . '</a></span>';
+                    return '<span class="badge badge-primary"><a class="text-light" href="' . route('orders.show', substr($order->name,1)) . '" target="_blank">' . $order->name . '</a></span>';
                 return '<span class="badge badge-danger">No Order ID</span>';
             })
             ->editColumn('financial_status', function($order) {

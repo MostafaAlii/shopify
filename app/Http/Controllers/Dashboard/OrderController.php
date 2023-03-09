@@ -30,13 +30,13 @@ class OrderController extends Controller
 
     public function orders_updated()
     {
-        $responses = Http::pool(fn(Pool $pool) => [
-//            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json'),
+        $responses = Http::pool(fn (Pool $pool) => [
+            //            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json'),
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250'),
         ]);
         if ($responses[0]->ok()) {
             foreach (array_merge($responses[0]['orders']) as $response) {
-                $order = DB::table('orders')->where('order_id', $response['id'])->first();
+                $order = DB::table('orders')->where('name', $response['name'])->first();
                 if (!$order) {
                     DB::table('orders')->insert([
                         'order_id' => $response['id'],
@@ -53,7 +53,7 @@ class OrderController extends Controller
                         'confirmed' => $response['confirmed'] ?? null,
                         'contact_email' => $response['contact_email'] ?? null,
                         'currency' => $response['currency'] ?? null,
-//                        'tracking_number' =>  array_key_exists('tracking_number',$response['fulfillments']) == true ? $response['fulfillments']['tracking_number'] : null ,
+                        //                        'tracking_number' =>  array_key_exists('tracking_number',$response['fulfillments']) == true ? $response['fulfillments']['tracking_number'] : null ,
                         'current_subtotal_price' => $response['current_subtotal_price'] ?? null,
                         'current_total_discounts' => $response['current_total_discounts'] ?? null,
                         'current_total_duties_set' => $response['current_total_duties_set'] ?? null,
@@ -75,7 +75,7 @@ class OrderController extends Controller
                         'order_number' => $response['order_number'] ?? null,
                         'order_status_url' => $response['order_status_url'] ?? null,
                         'original_total_duties_set' => $response['original_total_duties_set'] ?? null,
-//                        'payment_gateway_names' => explode(',',$response['payment_gateway_names'])  ?? null,
+                        //                        'payment_gateway_names' => explode(',',$response['payment_gateway_names'])  ?? null,
                         'phone' => $response['phone'] ?? null,
                         'presentment_currency' => $response['presentment_currency'] ?? null,
                         'processed_at' => $response['processed_at'] ?? null,
@@ -87,7 +87,7 @@ class OrderController extends Controller
                         'source_url' => $response['source_url'] ?? null,
                         'subtotal_price' => $response['subtotal_price'] ?? null,
                         'tags' => $response['tags'] ?? null,
-//                        'tax_lines' => $response['tax_lines'] ?? null,
+                        //                        'tax_lines' => $response['tax_lines'] ?? null,
                         'taxes_included' => $response['taxes_included'] ?? null,
                         'test' => $response['test'] ?? null,
                         'token' => $response['token'] ?? null,
@@ -98,8 +98,8 @@ class OrderController extends Controller
                         'total_tip_received' => $response['total_tip_received'] ?? null,
                         'total_weight' => $response['total_weight'] ?? null,
                         'user_id' => $response['user_id'] ?? null,
-//                        'payment_terms' => $response['payment_terms'] ?? null,
-//                        'refunds' => $response['refunds'] ?? null,
+                        //                        'payment_terms' => $response['payment_terms'] ?? null,
+                        //                        'refunds' => $response['refunds'] ?? null,
                     ]);
                 }
             }
@@ -113,33 +113,35 @@ class OrderController extends Controller
     public function orderSync()
     {
         try {
-            $responses = Http::pool(fn(Pool $pool) => [
+            $responses = Http::pool(fn (Pool $pool) => [
                 $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=any'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=any'),
                 $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&since_id=1'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=open'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=closed'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=cancelled'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=any'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=any'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=shipped'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=partial'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=unshipped'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=unfulfilled'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=authorized'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=pending'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=paid'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=partially_paid'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=refunded'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=voided'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=partially_refunded'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=any'),
-                $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=unpaid'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&since_id=1'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=open'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=closed'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=cancelled'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&status=any'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=any'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=shipped'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=partial'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=unshipped'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&fulfillment_status=unfulfilled'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=authorized'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=pending'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=paid'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=partially_paid'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=refunded'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=voided'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=partially_refunded'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=any'),
+                // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250&financial_status=unpaid'),
+
             ]);
-            if ($responses[0]->ok() && $responses[1]->ok() && $responses[2]->ok() && $responses[3]->ok() && $responses[4]->ok() && $responses[5]->ok() && $responses[6]->ok() && $responses[7]->ok() && $responses[8]->ok() && $responses[9]->ok() && $responses[10]->ok() && $responses[11]->ok() && $responses[12]->ok() && $responses[1]->ok() && $responses[14]->ok() && $responses[15]->ok() && $responses[16]->ok() && $responses[17]->ok() && $responses[18]->ok() && $responses[19]->ok() && $responses[20]->ok() && $responses[21]->ok()) {
-                foreach (array_merge($responses[0]['orders'], $responses[1]['orders'], $responses[2]['orders'], $responses[3]['orders'], $responses[4]['orders'], $responses[5]['orders'], $responses[6]['orders'], $responses[7]['orders'], $responses[8]['orders'], $responses[9]['orders'], $responses[10]['orders'], $responses[11]['orders'], $responses[12]['orders'], $responses[13]['orders'], $responses[14]['orders'], $responses[15]['orders'], $responses[16]['orders'], $responses[17]['orders'], $responses[18]['orders'], $responses[19]['orders'], $responses[20]['orders'], $responses[21]['orders']) as $response) {
-                    $order = DB::table('orders')->where('order_id', $response['id'])->first();
+            if ($responses[0]->ok() && $responses[1]->ok()) {
+                foreach (array_merge($responses[0]['orders'], $responses[1]['orders']) as $response) {
+
+                    $order = DB::table('orders')->where('name', $response['name'])->first();
                     if (!$order) {
                         DB::table('orders')->insert([
                             'order_id' => $response['id'],
@@ -178,7 +180,7 @@ class OrderController extends Controller
                             'order_number' => $response['order_number'] ?? null,
                             'order_status_url' => $response['order_status_url'] ?? null,
                             'original_total_duties_set' => $response['original_total_duties_set'] ?? null,
-//                        'payment_gateway_names' => explode(',',$response['payment_gateway_names'])  ?? null,
+                            //                        'payment_gateway_names' => explode(',',$response['payment_gateway_names'])  ?? null,
                             'phone' => $response['phone'] ?? null,
                             'presentment_currency' => $response['presentment_currency'] ?? null,
                             'processed_at' => $response['processed_at'] ?? null,
@@ -190,7 +192,7 @@ class OrderController extends Controller
                             'source_url' => $response['source_url'] ?? null,
                             'subtotal_price' => $response['subtotal_price'] ?? null,
                             'tags' => $response['tags'] ?? null,
-//                        'tax_lines' => $response['tax_lines'] ?? null,
+                            //                        'tax_lines' => $response['tax_lines'] ?? null,
                             'taxes_included' => $response['taxes_included'] ?? null,
                             'test' => $response['test'] ?? null,
                             'token' => $response['token'] ?? null,
@@ -201,8 +203,8 @@ class OrderController extends Controller
                             'total_tip_received' => $response['total_tip_received'] ?? null,
                             'total_weight' => $response['total_weight'] ?? null,
                             'user_id' => $response['user_id'] ?? null,
-//                        'payment_terms' => $response['payment_terms'] ?? null,
-//                        'refunds' => $response['refunds'] ?? null,
+                            //                        'payment_terms' => $response['payment_terms'] ?? null,
+                            //                        'refunds' => $response['refunds'] ?? null,
                         ]);
                     }
                 }
@@ -227,36 +229,23 @@ class OrderController extends Controller
         }
     }
 
+    // public function getAllIdOrders()
+    // {
+    //     $orders = DB::table('orders')->whereNull('order_id')->get();
+    //     foreach ($orders as $value) {
+    //     dd(substr($value->name,1));
+    //         //  /admin/api/2022-10/orders.json?name=AS3867
+    //         // dd($value);
+    //        $responses =  Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders/' . $value->name . '.json');
+    //        dd($responses->body());
+    //     }
+    // }
 
     public function updatedStatusOrders()
     {
 
-//        DB::table('orders')->orderBy('id')->chunk(100, function($orders){
-//            foreach ($orders as $order) {
-//                $response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders/' . $order->order_id . '.json');
-//                if ($response->ok()) {
-//                    if (isset($response['order']['fulfillments']) && !empty($response['order']['fulfillments'])) {
-//                        $order_tracking_number = DB::table('order_details')->where('order_id', $order->id)->whereNotNull('tracking_number')->first();
-//
-//                        if (!$order_tracking_number) {
-//                            DB::table('order_details')->insert([
-//                                'order_id' => $order->id,
-//                                'tracking_number' => $response['order']['fulfillments'][0]['tracking_number'],
-//                            ]);
-//                        }
-//                    }
-//                }
-//            }
-//        });
-
-        /*$orders = DB::table('orders')->select('id', 'order_id')->get();
-//        Artisan::call('queue:work');
-        UpdatedStatusOrder::dispatch($orders)->delay(now()->addSeconds(8));
-
-
-        return "ok";*/
         try {
-            $orders = DB::table('orders')->select('id', 'order_id')->get();
+            $orders = DB::table('orders')->whereNull('order_id')->select('id','name')->get();
             UpdatedStatusOrder::dispatch($orders)->delay(now()->addSeconds(8));
             $notification = array(
                 'message' => 'تم تحديث الطلبات بنجاح',
@@ -301,24 +290,32 @@ class OrderController extends Controller
      */
     public function show($order_id)
     {
-        //$order = DB::table('orders')->where('order_id', $order_id)->first();
-        $order = Order::where('order_id', $order_id)->with('order_details')->first();
-        $response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders/' . $order_id . '.json');
-//        return $response;
+
+
+
+        $order = Order::where('name', '#' . $order_id)->with('order_details')->first();
+
+        $response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?name=' . $order_id);
+
         if ($response->status() == 200) {
-            $order = DB::table('orders')->where('order_id', $response['order']['id'])->first();
-            DB::table('orders')->where('order_id', $response['order']['id'])->update([
-                'financial_status' => $response['order']['financial_status'] ?? null,
-                'fulfillment_status' => $response['order']['fulfillment_status'] ?? null,
-            ]);
+            $order = DB::table('orders')->where('order_id', $response['orders'][0]['id'])->first();
+
             $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order_id)->first();
             $tracking_number = null;
 
-            if (isset($response['order'][0]['fulfillments']) && !empty($response['order'][0]['fulfillments'])) {
-//                $tracking_number = $response['order']['fulfillments'][0]['tracking_number'] ?? null;
+            if (isset($response['orders'][0]['fulfillments']) && !empty($response['order'][0]['fulfillments'])) {
+                //                $tracking_number = $response['order']['fulfillments'][0]['tracking_number'] ?? null;
+
+                DB::table('orders')->where('name', $response['orders'][0]['name'])->update([
+                    'financial_status' => $response['orders'][0]['financial_status'] ?? null,
+                    'fulfillment_status' => $response['orders'][0]['fulfillment_status'] ?? null,
+                    'tracking_number' => $response['orders'][0]['fulfillments']['tracking_number']?? null,
+                    'order_id' =>  $response['orders'][0]['id'] ?? null,
+                ]);
                 if ($updateOrCreateOrderDetails) {
                     DB::table('order_details')->where('order_id', $order->id)->update([
-                        'tracking_number' => $response['order'][0]['fulfillments']
+                        'tracking_number' => $response['orders'][0]['fulfillments'],
+                        'order_id' =>  $response['orders'][0]['id'] ?? null,
                     ]);
                 } else {
                     DB::table('order_details')->insert([
@@ -328,10 +325,23 @@ class OrderController extends Controller
                 }
             }
 
-            return view('dashboard.orders.show', ['order' => $order, 'response' => $response]);
+            // return view('dashboard.orders.show', ['order' => $order, 'response' => $response]);
+            return view('dashboard.orders.show',compact('order','response'));
         }
         //return view('dashboard.orders.show', ['order' => $order, 'response' => $response]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -373,17 +383,19 @@ class OrderController extends Controller
         return $dataTable->render('dashboard.orders.index', ['status' => ucfirst($status), 'pageTitle' => 'الطلبات']);
     }
 
-    public function orders_upload() {
+    public function orders_upload()
+    {
         return view('dashboard.orders.upload');
     }
 
-    public function orders_excel_upload(Request $request) {
+    public function orders_excel_upload(Request $request)
+    {
         Excel::import(new OrdersImport, $request->csvFile);
         $notification = array(
-                'message' => 'تم تحديث الطلبات بنجاح',
-                'alert-type' => 'success'
-            );
-    
+            'message' => 'تم تحديث الطلبات بنجاح',
+            'alert-type' => 'success'
+        );
+
         return redirect()->route('orders.index')->with($notification);
     }
 }

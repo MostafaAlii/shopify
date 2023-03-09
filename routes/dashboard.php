@@ -24,6 +24,8 @@ Route::group(
                 Route::orderStatus(Order::VOIDED_STATUS);
 
                 Route::get('updatedOrders',[Dashboard\OrderController::class,'updatedStatusOrders']);
+                Route::get('getAllIdOrders',[Dashboard\OrderController::class,'getAllIdOrders']);
+                Route::get('showOrders/{id}/{name}',[Dashboard\OrderController::class,'showOrder'])->name('showOrders');
             });
         });
     require __DIR__.'/auth.php';

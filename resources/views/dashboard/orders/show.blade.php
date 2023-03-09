@@ -6,7 +6,7 @@
 @endsection
 
 @section('pageTitle')
-    الطلب | {{ $order?->order_id}}
+    الطلب | {{ $response['orders'][0]['name']}}
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
                 <h3 class="card-title align-items-start flex-column">
                     <span class="card-label fw-bolder fs-3 mb-1">
                         الطلب
-                        | {{ $order?->order_id}}
+                        | {{ $response['orders'][0]['name']}}
                     </span>
                 </h3>
             </div>
@@ -32,34 +32,34 @@
                         <!--begin::Card title-->
                         <div class="card-title m-0">
 
-                            <h3 class="fw-bolder m-0">name : {{ $order->name }}</h3>
+                            <h3 class="fw-bolder m-0">name : {{ $response['orders'][0]['name'] }}</h3>
                         </div>
 
                         <div class="card-title m-0">
 
-                            <h5 class="fw-bolder m-0">Subtotal Price : {{ $response['order']['subtotal_price'] }} SAR </h5>
+                            <h5 class="fw-bolder m-0">Subtotal Price : {{ $response['orders'][0]['subtotal_price'] }} SAR </h5>
                         </div>
 
                         <div class="card-title m-0">
 
-                            <h5 class="fw-bolder m-0">total Price : {{ $response['order']['total_price'] }} SAR </h5>
+                            <h5 class="fw-bolder m-0">total Price : {{ $response['orders'][0]['total_price'] }} SAR </h5>
                         </div>
 
                         <div class="card-title m-0">
 
-                            <h5 class="fw-bolder m-0">total Discounts : {{ $response['order']['current_total_discounts'] }} SAR </h5>
+                            <h5 class="fw-bolder m-0">total Discounts : {{ $response['orders'][0]['current_total_discounts'] }} SAR </h5>
                         </div>
 
                         <div class="card-title m-0">
 
                             <h3 class="fw-bolder m-0">
-                                @if(isset($response['order']['fulfillments'][0]))
-                                    <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$order->order_status_url}}"
-                                       target="_blank">{{$response['order']['fulfillments'][0]['tracking_number']}}</a>
-                                    {{--                                        {{$response['order']['fulfillments'][0]['tracking_number']}}--}}
+                                @if(isset($response['orders'][0]['fulfillments'][0]))
+                                    <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$response['orders'][0]['order_status_url']}}"
+                                       target="_blank">{{$response['orders'][0]['fulfillments'][0]['tracking_number']}}</a>
+                                    {{--                                        {{$response['orders'][0]['fulfillments'][0]['tracking_number']}}--}}
 
                                 @else
-                                    <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$order->order_status_url}}"
+                                    <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$response['orders'][0]['order_status_url']}}"
                                        target="_blank">  لا يوجد رقم تتبع الشحنه</a>
 
                                 @endif
@@ -78,7 +78,8 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8">
-                                <span class="fw-bolder fs-6 text-gray-800">{{$order->app_id}}</span>
+                               
+                                <span class="fw-bolder fs-6 text-gray-800"> {{$response['orders'][0]['app_id']}}</span>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -90,13 +91,13 @@
                             <!--begin::Col-->
                             <div class="col-lg-8">
                                 <span class="fw-bolder fs-6 text-gray-800">
-                                @if(isset($response['order']['fulfillments'][0]))
-                                        <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$order->order_status_url}}"
-                                           target="_blank">{{$response['order']['fulfillments'][0]['tracking_number']}}</a>
-{{--                                        {{$response['order']['fulfillments'][0]['tracking_number']}}--}}
+                                @if(isset($response['orders'][0]['fulfillments'][0]))
+                                        <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$response['orders'][0]['order_status_url']}}"
+                                           target="_blank">{{$response['orders'][0]['fulfillments'][0]['tracking_number']}}</a>
+{{--                                        {{$response['orders'][0]['fulfillments'][0]['tracking_number']}}--}}
 
                                     @else
-                                        <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$order->order_status_url}}"
+                                        <a class="fw-bolder text-primary fs-6 text-gray-800" href="{{$response['orders'][0]['order_status_url']}}"
                                            target="_blank">لا يوجد رقم تتبع الشحنه</a>
 
                                     @endif
@@ -112,7 +113,7 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8 fv-row">
-                                <span class="fw-bold text-gray-800 fs-6">{{$order->buyer_accepts_marketing}}</span>
+                                <span class="fw-bold text-gray-800 fs-6"> {{$response['orders'][0]['buyer_accepts_marketing']}}</span>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -126,7 +127,7 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8 d-flex align-items-center">
-                                <span class="fw-bolder fs-6 text-gray-800 me-2">{{$order->phone}}</span>
+                                <span class="fw-bolder fs-6 text-gray-800 me-2"> {{$response['orders'][0]['phone']}}</span>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -139,7 +140,7 @@
                             <!--begin::Col-->
                             <div class="col-lg-8">
                                 <a href="#"
-                                   class="fw-bold fs-6 text-gray-800 text-hover-primary">{{$order->merchant_of_record_app_id}}</a>
+                                   class="fw-bold fs-6 text-gray-800 text-hover-primary"> {{$response['orders'][0]['merchant_of_record_app_id']}}</a>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -153,7 +154,7 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8">
-                                <span class="fw-bolder fs-6 text-gray-800">{{$order->order_number}}</span>
+                                <span class="fw-bolder fs-6 text-gray-800"> {{$response['orders'][0]['order_number']}}</span>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -165,7 +166,7 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8">
-                                <a class="fw-bolder fs-6 text-gray-800" href="{{$order->order_status_url}}"
+                                <a class="fw-bolder fs-6 text-gray-800" href="{{$response['orders'][0]['order_status_url']}}"
                                    target="_blank">اضغط للعرض</a>
                             </div>
                             <!--end::Col-->
@@ -178,7 +179,7 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order->payment_gateway_names}}</span>
+                                <span class="fw-bold fs-6 text-gray-800">{{$order?->payment_gateway_names}}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -190,7 +191,7 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order->presentment_currency}}</span>
+                                <span class="fw-bold fs-6 text-gray-800">{{$order?->presentment_currency}}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -202,7 +203,7 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order->processing_method }}</span>
+                                <span class="fw-bold fs-6 text-gray-800">{{$order?->processing_method }}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -214,7 +215,7 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order->processed_at }}</span>
+                                <span class="fw-bold fs-6 text-gray-800">{{$order?->processed_at }}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -226,7 +227,7 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order->reference }}</span>
+                                <span class="fw-bold fs-6 text-gray-800">{{$order?->reference }}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -238,8 +239,8 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8">
-                                @if($order->referring_site != null)
-                                    <a class="fw-bolder fs-6 text-gray-800" href="{{$order->referring_site}}"
+                                @if($order?->referring_site != null)
+                                    <a class="fw-bolder fs-6 text-gray-800" href="{{$order?->referring_site}}"
                                        target="_blank">اضغط للعرض</a>
                                 @else
                                     <span class="fw-bolder fs-6 text-danger-800">لا يوجد رابط</span>
