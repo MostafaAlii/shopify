@@ -30,7 +30,7 @@ class OrderController extends Controller
 
     public function orders_updated()
     {
-        $responses = Http::pool(fn (Pool $pool) => [
+        $responses = Http::pool(fn(Pool $pool) => [
             //            $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json'),
             $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250'),
         ]);
@@ -113,7 +113,7 @@ class OrderController extends Controller
     public function orderSync()
     {
         try {
-            $responses = Http::pool(fn (Pool $pool) => [
+            $responses = Http::pool(fn(Pool $pool) => [
                 $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json'),
                 // $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?status=any'),
                 $pool->get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?limit=250'),
@@ -158,12 +158,12 @@ class OrderController extends Controller
                             'confirmed' => $response['confirmed'] ?? null,
                             'contact_email' => $response['contact_email'] ?? null,
                             'currency' => $response['currency'] ?? null,
-                            'tracking_number' => isset($response['fulfillments'][0])  ? $response['fulfillments'][0]['tracking_number'] :  null,
+                            'tracking_number' => isset($response['fulfillments'][0]) ? $response['fulfillments'][0]['tracking_number'] : null,
                             'current_subtotal_price' => $response['current_subtotal_price'] ?? null,
                             'current_total_discounts' => $response['current_total_discounts'] ?? null,
                             'current_total_duties_set' => $response['current_total_duties_set'] ?? null,
                             'current_total_tax' => $response['current_total_tax'] ?? null,
-                            'customer_locale' => $response['customer']['first_name'] . ' ' .  $response['customer']['last_name'] ?? null,
+                            'customer_locale' => $response['customer']['first_name'] . ' ' . $response['customer']['last_name'] ?? null,
                             'device_id' => $response['device_id'] ?? null,
                             'email' => $response['email'] ?? null,
                             'estimated_taxes' => $response['estimated_taxes'] ?? null,
@@ -245,7 +245,7 @@ class OrderController extends Controller
     {
 
         try {
-            $orders = DB::table('orders')->whereNull('order_id')->select('id','name')->get();
+            $orders = DB::table('orders')->whereNull('order_id')->select('id', 'name')->get();
             UpdatedStatusOrder::dispatch($orders)->delay(now()->addSeconds(8));
             $notification = array(
                 'message' => 'تم تحديث الطلبات بنجاح',
@@ -292,55 +292,33 @@ class OrderController extends Controller
     {
 
 
-
-        $order = Order::where('name', '#' . $order_id)->with('order_details')->first();
-
         $response = Http::get(RouteServiceProvider::SHOPIFYURL . '/admin/api/2022-10/orders.json?name=' . $order_id);
 
-        if ($response->status() == 200) {
-            $order = DB::table('orders')->where('order_id', $response['orders'][0]['id'])->first();
+        if ($response->status() == 200 && !empty($response['orders'])) {
 
-            $updateOrCreateOrderDetails = DB::table('order_details')->where('order_id', $order_id)->first();
-            $tracking_number = null;
 
-            if (isset($response['orders'][0]['fulfillments']) && !empty($response['order'][0]['fulfillments'])) {
-                //                $tracking_number = $response['order']['fulfillments'][0]['tracking_number'] ?? null;
+            DB::table('orders')->where('name', $response['orders'][0]['name'])->update([
+                'financial_status' => $response['orders'][0]['financial_status'],
+                'fulfillment_status' => $response['orders'][0]['fulfillment_status'],
+                'order_id' => $response['orders'][0]['id'],
+            ]);
 
+            if (isset($response['orders'][0]['fulfillments'][0])) {
                 DB::table('orders')->where('name', $response['orders'][0]['name'])->update([
-                    'financial_status' => $response['orders'][0]['financial_status'] ?? null,
-                    'fulfillment_status' => $response['orders'][0]['fulfillment_status'] ?? null,
-                    'tracking_number' => $response['orders'][0]['fulfillments']['tracking_number']?? null,
-                    'order_id' =>  $response['orders'][0]['id'] ?? null,
+                    'tracking_number' => $response['orders'][0]['fulfillments'][0]['tracking_number'],
                 ]);
-                if ($updateOrCreateOrderDetails) {
-                    DB::table('order_details')->where('order_id', $order->id)->update([
-                        'tracking_number' => $response['orders'][0]['fulfillments'],
-                        'order_id' =>  $response['orders'][0]['id'] ?? null,
-                    ]);
-                } else {
-                    DB::table('order_details')->insert([
-                        'order_id' => $order->id,
-                        'tracking_number' => $tracking_number,
-                    ]);
-                }
+
             }
+            return view('dashboard.orders.show', compact('response'));
 
-            // return view('dashboard.orders.show', ['order' => $order, 'response' => $response]);
-            return view('dashboard.orders.show',compact('order','response'));
+        }else{
+            $notification = array(
+                'message' => 'لا يوجد بيانات لهذا الطلب',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
         }
-        //return view('dashboard.orders.show', ['order' => $order, 'response' => $response]);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
     /**

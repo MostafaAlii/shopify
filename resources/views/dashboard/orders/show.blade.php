@@ -78,7 +78,7 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8">
-                               
+
                                 <span class="fw-bolder fs-6 text-gray-800"> {{$response['orders'][0]['app_id']}}</span>
                             </div>
                             <!--end::Col-->
@@ -179,7 +179,8 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order?->payment_gateway_names}}</span>
+{{--@dd($response['orders'][0]['payment_gateway_names'])--}}
+                                <span class="fw-bold fs-6 text-gray-800">{{$response['orders'][0]['payment_gateway_names'][0]}}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -191,7 +192,7 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order?->presentment_currency}}</span>
+                                <span class="fw-bold fs-6 text-gray-800">{{$response['orders'][0]['presentment_currency']}}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -203,7 +204,7 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order?->processing_method }}</span>
+                                <span class="fw-bold fs-6 text-gray-800">{{$response['orders'][0]['processing_method']}}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -215,7 +216,7 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order?->processed_at }}</span>
+                                <span class="fw-bold fs-6 text-gray-800">{{$response['orders'][0]['processed_at']}}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -227,7 +228,7 @@
                             <!--begin::Label-->
                             <!--begin::Label-->
                             <div class="col-lg-8">
-                                <span class="fw-bold fs-6 text-gray-800">{{$order?->reference }}</span>
+                                <span class="fw-bold fs-6 text-gray-800">{{$response['orders'][0]['reference'] }}</span>
                             </div>
                             <!--begin::Label-->
                         </div>
@@ -239,8 +240,8 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-8">
-                                @if($order?->referring_site != null)
-                                    <a class="fw-bolder fs-6 text-gray-800" href="{{$order?->referring_site}}"
+                                @if($response['orders'][0]['referring_site'] != null)
+                                    <a class="fw-bolder fs-6 text-gray-800" href="{{$response['orders'][0]['referring_site']}}"
                                        target="_blank">اضغط للعرض</a>
                                 @else
                                     <span class="fw-bolder fs-6 text-danger-800">لا يوجد رابط</span>
