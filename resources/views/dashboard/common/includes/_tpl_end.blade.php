@@ -24,6 +24,7 @@
 <script src="{{ asset("assets/dashboard/js/custom/apps/chat/chat.js") }}"></script>
 <script src="{{ asset("assets/dashboard/js/custom/modals/create-app.js") }}"></script>
 <script src="{{ asset("assets/dashboard/js/custom/modals/upgrade-plan.js") }}"></script>
+
 <!--end::Page Custom Javascript-->
 <!--end::Javascript-->
     @stack('js')

@@ -22,7 +22,7 @@ class OrderStatusDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addColumn('action', 'dashboard.orders.btn.action')
-            ->editColumn('order_id', function ($order) {
+            /*->editColumn('order_id', function ($order) {
                 return '<span class="badge badge-primary"><a class="text-light" href="' . route('orders.show', $order->order_id) . '" target="_blank">' . $order->order_id . '</a></span>';
             })
             ->editColumn('financial_status', function($order) {
@@ -51,7 +51,7 @@ class OrderStatusDataTable extends DataTable
                     return '<span class="badge badge-' . $badge . '">No Closed Data</span>';
                 return '<span class="badge badge-' . $badge . '">' . $order->closed_at . '</span>';
             })
-            /*->editColumn('created_at', function($order) {
+            ->editColumn('created_at', function($order) {
                 $badge = $order->created_at == null ? 'danger' : 'success';
                 if ($order->created_at == null)
                     return '<span class="badge badge-' . $badge . '">No Created Data</span>';
@@ -63,16 +63,61 @@ class OrderStatusDataTable extends DataTable
                     return '<span class="badge badge-' . $badge . '">No Updated Data</span>';
                 return '<span class="badge badge-' . $badge . '">' . $order->updated_at->diffForHumans() . '</span>';
             })*/
+            ->editColumn('name', function ($order) {
+                if($order->name != null)
+                    return '<span class="badge badge-primary"><a class="text-light" href="' . route('orders.show', substr($order->name,1)) . '" target="_blank">' . $order->name . '</a></span>';
+                return '<span class="badge badge-danger">No Order ID</span>';
+            })
+            ->editColumn('financial_status', function($order) {
+                $badge = $order->financial_status == 'pending' ? 'warning' : 'success';
+                return '<span class="badge badge-' . $badge . '">' . $order->financial_status . '</span>';
+            })
+            ->editColumn('gateway', function($order) {
+                $badge = $order->gateway == 'Cash on Delivery (COD)' ? 'primary' : 'success';
+                return '<span class="badge badge-' . $badge . '">' . $order->gateway . '</span>';
+            })
+            ->editColumn('checkout_id', function($order) {
+                $badge = $order->checkout_id == null ? 'danger' : 'success';
+                if ($order->checkout_id == null)
+                    return '<span class="badge badge-' . $badge . '">No Checkout</span>';
+                return '<span class="badge badge-' . $badge . '">' . $order->checkout_id . '</span>';
+            })
+            ->editColumn('cancelled_at', function($order) {
+                $badge = $order->cancelled_at == null ? 'danger' : 'success';
+                if ($order->cancelled_at == null)
+                    return '<span class="badge badge-' . $badge . '">No Cancelled Data</span>';
+                return '<span class="badge badge-' . $badge . '">' . $order->cancelled_at . '</span>';
+            })
+            ->editColumn('closed_at', function($order) {
+                $badge = $order->closed_at == null ? 'danger' : 'success';
+                if ($order->closed_at == null)
+                    return '<span class="badge badge-' . $badge . '">No Closed Data</span>';
+                return '<span class="badge badge-' . $badge . '">' . $order->closed_at . '</span>';
+            })
+            ->editColumn('tracking_number', function($order) {
+                $tracking_number = $order->tracking_number == null ? 'danger' : 'success';
+                if ($order->tracking_number == null)
+                    return '<span class="badge badge-' . $tracking_number . '">No tracking Number</span>';
+                return '<span class="badge badge-' . $tracking_number . '">' . $order->tracking_number . '</span>';
+            })
             ->rawColumns([
-                'financial_status',
+                /*'financial_status',
                 'checkout_id',
                 'gateway',
                 'action',
                 'order_id',
                 'cancelled_at',
                 'closed_at',
-                //'created_at',
-                //'updated_at',
+                'created_at',
+                'updated_at',*/
+                'financial_status',
+                'checkout_id',
+                'gateway',
+                'action',
+                'name',
+                'cancelled_at',
+                'tracking_number',
+                'closed_at',
             ]);
     }
 
@@ -165,7 +210,7 @@ class OrderStatusDataTable extends DataTable
      */
     protected function getColumns() {
         return [
-            ['name'=>'id', 'data'=>'id', 'title'=>'#',],
+            /*['name'=>'id', 'data'=>'id', 'title'=>'#',],
             ['name'=>'order_id', 'data'=>'order_id', 'title'=>'Order Id'],
             ['name'=>'name', 'data'=>'name', 'title'=>'Name'],
             ['name'=>'contact_email', 'data'=>'contact_email', 'title'=>'Contact Email'],
@@ -183,7 +228,14 @@ class OrderStatusDataTable extends DataTable
 //            ['name'=>'closed_at', 'data'=>'closed_at', 'title'=>'Closed At'],
 //            ['name'=>'created_at', 'data'=>'created_at', 'title'=>'Created At'],
 //            ['name'=>'updated_at', 'data'=>'updated_at', 'title'=>'Updated At'],
-            ['name'=>'action', 'data'=>'action', 'title'=>'Action', 'exportable'=>false, 'printable'=>false, 'orderable'=>false, 'searchable'=>false],
+            ['name'=>'action', 'data'=>'action', 'title'=>'Action', 'exportable'=>false, 'printable'=>false, 'orderable'=>false, 'searchable'=>false],*/
+            ['name'=>'id', 'data'=>'id', 'title'=>'#',],
+            ['name'=>'name', 'data'=>'name', 'title'=>'Name'],
+            ['name'=>'gateway', 'data'=>'gateway', 'title'=>'Gateway'],
+            ['name'=>'financial_status', 'data'=>'financial_status', 'title'=>'Financial Status'],
+            ['name'=>'total_price', 'data'=>'total_price', 'title'=>'Total Price'],
+            ['name'=>'customer_locale', 'data'=>'customer_locale', 'title'=>'customer name'],
+            ['name'=>'tracking_number', 'data'=>'tracking_number', 'title'=>'tracking number'],
         ];
     }
 

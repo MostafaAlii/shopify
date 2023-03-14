@@ -1,8 +1,5 @@
 <?php
-/**
- * check app locale and change class from bottom-start to bottom-end 
- * if app locale is arabic change class from bottom-start to bottom-end else change class from bottom-end to bottom-start
- */
+use Illuminate\Support\Facades\Request;
 function bottomStartDirectionClass() {
     $class = 'bottom-start';
     if (app()->getLocale() == 'ar') {
@@ -33,4 +30,13 @@ function leftStartDirectionClass() {
         $class = 'right-start';
     }
     return $class;
+}
+if(!function_exists('active_menu')){
+    function active_menu($link){
+        if (preg_match('/'.$link.'/i', Request::segment(3))) {
+			return ['show', 'show'];
+		} else {
+			return ['', ''];
+		}
+    }
 }

@@ -32,20 +32,91 @@
                     </div>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link active" href="{{route('dashboard')}}">
+                    <a class="menu-link {{request()->route()->getName() == 'dashboard' ? 'active' : ''}}" href="{{route('dashboard')}}">
                         <span class="menu-icon">
                             <i class="bi bi-grid fs-3"></i>
                         </span>
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </div>
-                <div class="menu-item">
-                    <a class="menu-link" href="{{route('orders.index')}}">
+                <div data-kt-menu-trigger="click" class="menu-item menu-accordion hover {{active_menu('orders')[0]}}">
+                    <span class="menu-link">
                         <span class="menu-icon">
                             <i class="bi bi-window fs-3"></i>
                         </span>
                         <span class="menu-title">Orders</span>
-                    </a>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link {{request()->route()->getName() == 'orders.index' ? 'active' : ''}}" href="{{route('orders.index')}}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Orders</span>
+                                <span class="badge badge badge-light badge-pill text-gray-50 fs-7 fw-bold ms-1">{{Order::count()}}</span>
+                            </a>
+                        </div>
+                        <!-- Start Paid Order -->
+                        <div class="menu-item">
+                            <a class="menu-link {{request()->route()->getName() == 'order.paid' ? 'active' : ''}}" href="{{ route('order.paid') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">{{ucfirst(Order::PAID_STATUS) . ' Orders' }}</span>
+                                <span class="badge badge badge-success badge-pill text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPaidFinancialStatus()->count()}}</span>
+                            </a>
+                        </div>
+                        <!-- End Paid Order -->
+                        <!-- Start Pending Order -->
+                        <div class="menu-item">
+                            <a class="menu-link {{request()->route()->getName() == 'order.pending' ? 'active' : ''}}" href="{{ route('order.pending') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">{{ucfirst(Order::PENDING_STATUS) . ' Orders' }}</span>
+                                <span
+                                    class="badge badge badge-warning badge-pill text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPendingFinancialStatus()->count()}}</span>
+                            </a>
+                        </div>
+                        <!-- End Pending Order -->
+                        <!-- Start PARTIALLY_REFUNDED Order -->
+                        <div class="menu-item">
+                            <a class="menu-link {{request()->route()->getName() == 'order.partially_refunded' ? 'active' : ''}}" href="{{ route('order.partially_refunded') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">{{ucfirst(Order::PARTIALLY_REFUNDED_STATUS) . ' Orders' }}</span>
+                                <span
+                                    class="badge badge badge-info badge-pill text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByPartiallyRefundedFinancialStatus()->count()}}</span>
+                            </a>
+                        </div>
+                        <!-- End PARTIALLY_REFUNDED Order -->
+                        <!-- Start REFUNDED Order -->
+                        <div class="menu-item">
+                            <a class="menu-link {{request()->route()->getName() == 'order.refunded' ? 'active' : ''}}" href="{{ route('order.refunded') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">{{ucfirst(Order::REFUNDED_STATUS) . ' Orders' }}</span>
+                                <span
+                                    class="badge badge badge-primary badge-pill text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByRefundedFinancialStatus()->count()}}</span>
+                            </a>
+                        </div>
+                        <!-- End REFUNDED Order -->
+                        <!-- Start VOIDED Order -->
+                        <div class="menu-item">
+                            <a class="menu-link {{request()->route()->getName() == 'order.voided' ? 'active' : ''}}" href="{{ route('order.voided') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">{{ucfirst(Order::VOIDED_STATUS) . ' Orders' }}</span>
+                                <span
+                                    class="badge badge badge-danger badge-pill text-gray-50 fs-7 fw-bold ms-1">{{Order::getOrderCountByVoidedFinancialStatus()->count()}}</span>
+                            </a>
+                        </div>
+                        <!-- End VOIDED Order -->
+                    </div>
                 </div>
 {{--                <div class="menu-item">--}}
 {{--                    <a class="menu-link" href="{{route('orders.show','5274606829863')}}">--}}
